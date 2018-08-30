@@ -212,7 +212,7 @@ for(i in seq(numPairs)){
 
 if (verbose=="true"){
     cat("Data stored in matrices\n")
-    cat("Begin making plots\n")
+    cat("Beginning to make plots\n")
 }
 
 

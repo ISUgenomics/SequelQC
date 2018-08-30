@@ -98,6 +98,12 @@ command -v Rscript >/dev/null 2>&1 || {
     print_help_menu
 }
 
+#Check that the user has samtools
+command -v samtools >/dev/null 2>&1 || {
+    echo -e >&2 "\nERROR: This program requires samtools to run."
+    echo >&2 "You do not seem to have samtools."
+    print_help_menu
+}
 
 #Assign defaults to variables
 SUBREADS_FILES_BAM=""
@@ -218,7 +224,6 @@ for NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     (( I++ ))
 done
 
-
 #Extract names that will contain coords necessary for calculating length
 FAILED_EXTRACTION="ERROR: BAM data extraction failed!"
 if [ $VERBOSE == true ]; then
@@ -227,21 +232,33 @@ fi
 
 I=1
 for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
-    NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+    #Check that .bam files exist and are not empty
+    if [ ! -s "$BAM" ]; then
+        echo >&2 "the BAM file "$BAM" is empty or does not exist"
+        print_help_menu
+    fi
+
+#    NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
 I=1
 for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
-    NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+    #Check that .bam files exist and are not empty
+    if [ ! -s "$BAM" ]; then
+        echo >&2 "the BAM file "$BAM" is empty or does not exist"
+        print_help_menu
+    fi
+
+#    NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
@@ -261,19 +278,19 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
   
     if [ "$PY_VER" == 2 ]; then
-        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
