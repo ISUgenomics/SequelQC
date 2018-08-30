@@ -238,11 +238,11 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
         print_help_menu
     fi
 
-    NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+#    NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
@@ -254,11 +254,11 @@ for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
         print_help_menu
     fi
 
-    NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+#    NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
@@ -278,19 +278,19 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
   
     if [ "$PY_VER" == 2 ]; then
-        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
@@ -312,6 +312,11 @@ fi
 
 
 #Make plots related to read length stats in R
+if [ -d SequelQCresults ]; then
+    rm -r SequelQCresults
+fi
+
+mkdir SequelQCresults
 Rscript plotForSequelQC.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE"  #the '::-1' is to remove the comma at the end
 
 if [ $VERBOSE == true ]; then
