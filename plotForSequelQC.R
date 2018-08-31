@@ -257,6 +257,17 @@ for(i in seq(numPairs)){
 }
 
 
+##set text size for all barplots
+if (numPairs <= 10) {
+    textSize = 1
+}else if (numPairs <= 15) {
+    textSize = 0.85
+}else if (numPairs <= 20) {
+    textSize = 0.70
+}else {
+    textSize = 0.55
+}
+
 pdf("SequelQCresults/n50s.pdf")
 par(omi=c(0.8,0.2,0,0), mgp=c(3.5,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 if (groupsDesired == "a") {
@@ -267,7 +278,7 @@ if (groupsDesired == "a") {
     theseNames=c("subedZMWs","subreads")
 }
 barplot(allN50s, main="N50 summary", ylab="N50", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(allN50s)*1.2))
-legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72))
+legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=textSize)
 invisible(dev.off())
 
 if (plotsDesired == "a"){
@@ -278,8 +289,8 @@ if (plotsDesired == "a"){
     }else if (groupsDesired == "b") {
         allL50s = cbind(subedZmwL50s, subL50s)
     }
-    barplot(allL50s, main="L50 summary", ylab="L50", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(allL50s)*1.2))
-    legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72))
+    barplot(allL50s, main="L50 summary", ylab="L50", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(allL50s)*1.4))
+    legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=textSize-0.12)
     invisible(dev.off())
     }
 
@@ -427,7 +438,7 @@ if (groupsDesired == "a") {
 }
 
 barplot(totalBasesArray/1000000, main="Total Bases Barplot", ylab="Total Bases (Mb)", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(totalBasesArray)*1.15/1000000))
-legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72))
+legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=textSize)
 invisible(dev.off())
 
 
