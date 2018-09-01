@@ -9,7 +9,7 @@ function print_help_menu() {
     cat <<helpChunk
     
     ###########################################################################
-                  This is the help menu for SequelQC version 1.0.0
+                  This is the help menu for SequelQC version 0.9.0
     ###########################################################################
     Dependencies for this program are samtools, Python, and R
     For this help menu use the parameter -h or no parameters
@@ -224,6 +224,22 @@ for NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     (( I++ ))
 done
 
+FILES_BASE_ARRAY2=()
+I=1
+for NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
+    if [[ "$NOBAM" =~ (.*).subreads ]]; then
+        BASE=${BASH_REMATCH[1]}
+        FILES_BASE_ARRAY2[ $I ]="$BASE"
+    fi
+    (( I++ ))
+done
+
+#Ensure that the scraps and subreads files match
+if [ "${FILES_BASE_ARRAY[*]}" != "${FILES_BASE_ARRAY2[*]}" ]; then
+    echo -e "\nERROR: Your scraps and subreads files do not match"
+    print_help_menu
+fi
+
 #Extract names that will contain coords necessary for calculating length
 FAILED_EXTRACTION="ERROR: BAM data extraction failed!"
 if [ $VERBOSE == true ]; then
@@ -296,7 +312,7 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
         make_args_for_R_array
 
     else
-        echo "ERROR: This program requires Python 2 or Python 3.  You seem to" 
+        echo -e "\nERROR: This program requires Python 2 or Python 3.  You seem to" 
         echo "be working with a different version."
         echo >&2 "$FAILED_RLSTATS"
         exit 1
