@@ -9,7 +9,7 @@ function print_help_menu() {
     cat <<helpChunk
     
     ###########################################################################
-                  This is the help menu for SequelQC version 0.9.0
+                  This is the help menu for SequelQC version 1.0.0
     ###########################################################################
     Dependencies for this program are samtools, Python, and R
     For this help menu use the parameter -h or no parameters
