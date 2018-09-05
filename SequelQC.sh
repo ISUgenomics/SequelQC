@@ -11,8 +11,8 @@ function print_help_menu() {
     ###########################################################################
                   This is the help menu for SequelQC version 1.0.0
     ###########################################################################
-    Dependencies for this program are samtools, Python, and R
-    For this help menu use the parameter -h or no parameters
+    Dependencies for this program are samtools, Python, and R.
+    For this help menu use the parameter -h or no parameters.
     Required parameters are -u and -c
 
     Notes: a subedZMW is a ZMW containing at least one subread
