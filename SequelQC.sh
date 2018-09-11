@@ -22,6 +22,7 @@ function print_help_menu() {
     -c : A file listing the names of scraps .bam sequence files
     -n : The number of threads to use for extracting information from .bam 
          files for each .bam file. Default is '1'
+    -o : Folder to output results to. Default is 'SequelQCresults'
     -v : A verbose option for those who want updates as the program progresses
     -k : Keep intermediate files (these are removed by default)
     -g : Groups desired. Options: 'a' for all (ZMWs, subedZmws, 
@@ -114,10 +115,10 @@ KEEP=false
 REQUIRED_PAR=0 #used to determine whether all required parameters were used
 GROUPS_DESIRED='a'
 PLOTS_DESIRED='i'
-
+OUT_FOLD='SequelQCresults'
 
 #Go through input and assign input arguments to variables
-while getopts ":u:c:n:g:p:vkh" opt; do
+while getopts ":u:c:o:n:g:p:vkh" opt; do
     case ${opt} in 
       u )
         SUBREADS_FILES_BAM=$OPTARG
@@ -126,6 +127,9 @@ while getopts ":u:c:n:g:p:vkh" opt; do
       c )
         SCRAPS_FILES_BAM=$OPTARG
         (( REQUIRED_PAR++ ))
+        ;;
+      o )
+        OUT_FOLD=$OPTARG
         ;;
       n )
         NTHREADS=$OPTARG
@@ -255,10 +259,10 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
     fi
 
     NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
@@ -271,10 +275,10 @@ for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
     fi
 
     NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+#    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+#    echo >&2 "$FAILED_EXTRACTION"
+#    exit 1
+#    }
     (( I++ ))
 done
 
@@ -294,19 +298,19 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
   
     if [ "$PY_VER" == 2 ]; then
-        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+#        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+#        echo >&2 "$FAILED_RLSTATS"
+#        exit 1
+#        }
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
@@ -328,12 +332,12 @@ fi
 
 
 #Make plots related to read length stats in R
-if [ -d SequelQCresults ]; then
-    rm -r SequelQCresults
+if [ -d "$OUT_FOLD" ]; then
+    rm -r "$OUT_FOLD"
 fi
 
-mkdir SequelQCresults
-Rscript plotForSequelQC.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE"  #the '::-1' is to remove the comma at the end
+mkdir "$OUT_FOLD"
+Rscript plotForSequelQC.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE"  "$OUT_FOLD" #the '::-1' is to remove the comma at the end
 
 if [ $VERBOSE == true ]; then
     echo "Plot creation complete"

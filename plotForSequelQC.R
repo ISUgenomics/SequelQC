@@ -41,7 +41,6 @@ ReadLensFileToMatrix = function(filesLst, FLsLst){
 #Disallow scientific notation for the purpose of plotting
 options(scipen=999)
 
-
 #Take in files and file lengths and assign them to variables
 args = commandArgs(TRUE)
 allFiles = strsplit(args[1], ",")[[1]]
@@ -49,6 +48,7 @@ allFileLengths = strsplit(args[2], ",")[[1]]
 groupsDesired = args[3]
 plotsDesired = args[4]
 verbose = args[5]
+outFold = args[6]
 
 SMRTcellStatsFiles = c(); readLensSubFiles = c(); readLensLongSubFiles = c()
 readLensSubedZmwFiles = c(); zmwStatsFiles = c()
@@ -268,7 +268,8 @@ if (numPairs <= 10) {
     textSize = 0.55
 }
 
-pdf("SequelQCresults/n50s.pdf")
+plotName = sprintf("%s/n50s.pdf",outFold)
+pdf(plotName)
 par(omi=c(0.8,0.2,0,0), mgp=c(3.5,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 if (groupsDesired == "a") {
     allN50s = cbind(subedZmwN50s, zmwN50s, longSubN50s, subN50s)
@@ -282,7 +283,8 @@ legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=
 invisible(dev.off())
 
 if (plotsDesired == "a"){
-    pdf("SequelQCresults/l50s.pdf")
+    plotName = sprintf("%s/l50s.pdf",outFold)
+    pdf(plotName)
     par(omi=c(0.8,0,0,0), mgp=c(3.8,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
     if (groupsDesired == "a") {
         allL50s = cbind(zmwL50s, subedZmwL50s, subL50s, longSubL50s)
@@ -299,7 +301,8 @@ if (plotsDesired == "a"){
 #  length, N50, and L50 for the following groups: subreads, longest subreads,
 #  zmws, and zmws with subreads, as well as PSR, and ZOR. Also build total 
 #  bases arrays and min, max, and mean values for longest subread lengths for future use.
-sink("SequelQCresults/summaryTable.txt")
+plotName = sprintf("%s/summaryTable.txt",outFold)
+sink(plotName)
 totalBasesSubedZmwAr = c(); totalBasesSubAr = c()
 if (groupsDesired == "a") {
     cat("SMRTcell\tnumReadsZmw\tnumReadsSubedZmw\tnumReadsSubread\tnumReadsLongestSub\ttotalBasesZmw\ttotalBasesSubedZmw\ttotalBasesSubread\ttotalBasesLongestSub\tmeanReadLenZmw\tmeanReadLenSubedZmw\tmeanReadLenSubread\tmeanReadLenLongestSub\tmedianReadLenZmw\tmedianReadLenSubedZmw\tmedianReadLenSubread\tmedianReadLenLongestSub\tn50Zmw\tn50SubedZmw\tn50Subread\tn50LongestSub\tl50Zmw\tl50SubedZmw\tl50Subread\tl50LongestSub\tPSR\tZOR\n")
@@ -385,7 +388,7 @@ if (plotsDesired == "a") {
         subedZmwRLs = subedZmwReadLensMatrix[i,]
 
         #Create strings to use for plotting
-        histName = sprintf("SequelQCresults/%s.readLenHists.pdf", pairNames[i])
+        histName = sprintf("%s/%s.readLenHists.pdf", outFold, pairNames[i])
         subTitle = sprintf("Histogram of subread read lengths for %s", pairNames[i])
         subedZmwTitle = sprintf("Histogram of subed-Zmw read lengths for %s", pairNames[i])
 
@@ -427,8 +430,9 @@ if (plotsDesired == "a") {
 
 
 #Make a barplot of total bases for all the same groups for each SMRTcell
-pdf("SequelQCresults/totalBasesBarplot.pdf")
-par(omi=c(1.5,0,0,0), mgp=c(3.6,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
+plotName = sprintf("%s/totalBasesBarplot.pdf",outFold)
+pdf(plotName)
+par(omi=c(0.8,0,0,0), mgp=c(3.6,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 if (groupsDesired == "a") {
     totalBasesArray = cbind(totalBasesZmwAr, totalBasesSubedZmwAr, totalBasesSubAr, totalBasesLongSubAr)
     theseNames=c("ZMWs", "subedZMWs","subreads", "longestSubreads")
@@ -444,7 +448,8 @@ invisible(dev.off())
 
 #Make ZOR and PSR plots
 if (plotsDesired != "b") {
-    pdf("SequelQCresults/zors.pdf", height=2.5)
+    plotName = sprintf("%s/zors.pdf",outFold)
+    pdf(plotName, height=2.5)
     par(mar=c(2.5,1,9,1))
     plot(-1,-1, xlim=c(0,1), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="ZORs") #Start with an empty plot
     abline(v=zors, lwd=1.5, col="black") #Then attach vertical lines for ZORs
@@ -454,7 +459,8 @@ if (plotsDesired != "b") {
     }
     invisible(dev.off())
 
-    pdf("SequelQCresults/psrs.pdf", height=2.5)
+    plotName = sprintf("%s/psrs.pdf",outFold)
+    pdf(plotName, height=2.5)
     par(mar=c(2.5,1,9,1))
     plot(-1,-1, xlim=c(0,1), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="PSRs") #Start with an empty plot
     abline(v=psrs, lwd=1.5, col="black") #Then attach vertical lines for PSRs
@@ -470,7 +476,7 @@ if (plotsDesired != "b") {
 if (plotsDesired == "a") {
     ##Make read length histograms of subreads/subedZMW
     for(i in seq(numPairs)){
-        plotName = sprintf("SequelQCresults/%s.subsPerSubedZmwHists.pdf", pairNames[i])
+        plotName = sprintf("%s/%s.subsPerSubedZmwHists.pdf", outFold, pairNames[i])
         pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
         numSubsPerSubedZmwMatrixi = numSubsPerZmwMatrix[i,][numSubsPerZmwMatrix[i,]!=0]
         hist(numSubsPerSubedZmwMatrixi, breaks=max(numSubsPerSubedZmwMatrixi, na.rm=TRUE), xlim=c(1,6), main="Histogram of Subreads per subedZMW", xlab="Subreads per subedZMW", col="#0276FD")
@@ -480,7 +486,7 @@ if (plotsDesired == "a") {
     ##Make read length histograms of subreads/ZMW
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("SequelQCresults/%s.subsPerZmwHists.pdf", pairNames[i])
+            plotName = sprintf("%s/%s.subsPerZmwHists.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
             hist(numSubsPerZmwMatrix[i,], max(numSubsPerZmwMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Subreads per ZMW", xlab="Subreads per ZMW", col="#0276FD")
             invisible(dev.off())
@@ -490,7 +496,7 @@ if (plotsDesired == "a") {
     ##Make read length histograms of adapters/ZMW
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("SequelQCresults/%s.adsPerZmwHists.pdf", pairNames[i])
+            plotName = sprintf("%s/%s.adsPerZmwHists.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5)
             hist(numAdsPerZmwMatrix[i,], breaks=max(numAdsPerZmwMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per Zmw", xlab="Adapters per ZMW", col="#0276FD")
             invisible(dev.off())
@@ -502,14 +508,16 @@ if (plotsDesired == "a") {
 #Make N50 and L50 boxplots
 if (plotsDesired != "b") {
     ##Make boxplots of subread sizes with N50 shown 
-    pdf("SequelQCresults/subreadSizesBoxplots.pdf")
+    plotName = sprintf("%s/subreadSizesBoxplots.pdf",outFold)
+    pdf(plotName)
     par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
     boxplot(t(subReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of Subread Sizes with N50", las=2)
     points(subN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())
 
     ##Make boxplots of subedZmw sizes with N50 shown 
-    pdf("SequelQCresults/subedZmwSizesBoxplots.pdf")
+    plotName = sprintf("%s/subedZmwSizesBoxplots.pdf",outFold)
+    pdf(plotName)
     par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
     boxplot(t(subedZmwReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of SubedZMW Sizes with N50", las=2)
     points(subedZmwN50s/1000, pch=18, col="#0276FD", cex=2)
