@@ -332,10 +332,6 @@ fi
 
 
 #Make plots related to read length stats in R
-if [ -d "$OUT_FOLD" ]; then
-    rm -r "$OUT_FOLD"
-fi
-
 mkdir "$OUT_FOLD"
 Rscript plotForSequelQC.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE"  "$OUT_FOLD" #the '::-1' is to remove the comma at the end
 
