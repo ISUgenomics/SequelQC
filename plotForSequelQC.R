@@ -476,7 +476,7 @@ if (plotsDesired != "b") {
 if (plotsDesired == "a") {
     ##Make read length histograms of subreads/subedZMW
     for(i in seq(numPairs)){
-        plotName = sprintf("%s/%s.subsPerSubedZmwHists.pdf", outFold, pairNames[i])
+        plotName = sprintf("%s/%s.subsPerSubedZmwHist.pdf", outFold, pairNames[i])
         pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
         numSubsPerSubedZmwMatrixi = numSubsPerZmwMatrix[i,][numSubsPerZmwMatrix[i,]!=0]
         hist(numSubsPerSubedZmwMatrixi, breaks=max(numSubsPerSubedZmwMatrixi, na.rm=TRUE), xlim=c(1,6), main="Histogram of Subreads per subedZMW", xlab="Subreads per subedZMW", col="#0276FD")
@@ -486,7 +486,7 @@ if (plotsDesired == "a") {
     ##Make read length histograms of subreads/ZMW
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("%s/%s.subsPerZmwHists.pdf", outFold, pairNames[i])
+            plotName = sprintf("%s/%s.subsPerZmwHist.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
             hist(numSubsPerZmwMatrix[i,], max(numSubsPerZmwMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Subreads per ZMW", xlab="Subreads per ZMW", col="#0276FD")
             invisible(dev.off())
