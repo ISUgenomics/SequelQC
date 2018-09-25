@@ -15,7 +15,7 @@ function print_help_menu() {
     For this help menu use the parameter -h or no parameters.
     Required parameters are -u and -c
 
-    Notes: a subedZMW is a ZMW containing at least one subread
+    Notes: a subedCLR is a CLR containing at least one subread
 
     All parameters:
     -u : A file listing the names of subreads .bam sequence files
@@ -25,17 +25,17 @@ function print_help_menu() {
     -o : Folder to output results to. Default is 'SequelQCresults'
     -v : A verbose option for those who want updates as the program progresses
     -k : Keep intermediate files (these are removed by default)
-    -g : Groups desired. Options: 'a' for all (ZMWs, subedZmws, 
-         subreads, and longest subreads), and 'b' for basic (subedZmws and 
+    -g : Groups desired. Options: 'a' for all (CLRs, subedCLRs, 
+         subreads, and longest subreads), and 'b' for basic (subedCLRs and 
          subreads).  Default is 'a'
     -p : Plots desired.  Options: 'b' for basic (N50 barplot, summary data
          table, and total bases barplot), 'i' for intermediate (N50 barplot, 
          summary data table, total bases barplot, ZOR plot, PSR plot, boxplot
-         of subread read lengths with N50, boxplot of subedZMW read lengths 
+         of subread read lengths with N50, boxplot of subedCLR read lengths 
          with N50), and 'a' for all (N50 barplot, L50 barplot, summary data 
          table, read length histograms, total bases barplot, ZOR plot, PSR plot,
-         histograms of subreads per subedZMW, histograms of adapters per ZMW, 
-         Boxplot of subread read lengths with N50, boxplot of subedZMW read 
+         histograms of subreads per subedCLR, histograms of adapters per CLR, 
+         Boxplot of subread read lengths with N50, boxplot of subedCLR read 
          lengths with N50).  Default is 'i'
     -h : opens this help menu
 helpChunk
@@ -47,28 +47,28 @@ function make_args_for_R_array() {
     if [ "$GROUPS_DESIRED" == "a" ]; then
         FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
         FILES_FOR_R+="$BASE.readLens.sub.txt,"
-        FILES_FOR_R+="$BASE.readLens.zmw.txt,"
-        FILES_FOR_R+="$BASE.readLens.subedZmw.txt,"
+        FILES_FOR_R+="$BASE.readLens.clr.txt,"
+        FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
         FILES_FOR_R+="$BASE.readLens.longSub.txt,"
-        FILES_FOR_R+="$BASE.zmwStats.txt,"
+        FILES_FOR_R+="$BASE.clrStats.txt,"
         LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.zmw.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedZmw.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.clr.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.zmwStats.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
 
     elif [ "$GROUPS_DESIRED" == "b"   ]; then
         FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
         FILES_FOR_R+="$BASE.readLens.sub.txt,"
-        FILES_FOR_R+="$BASE.readLens.subedZmw.txt,"
+        FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
         FILES_FOR_R+="$BASE.readLens.longSub.txt,"
-        FILES_FOR_R+="$BASE.zmwStats.txt,"
+        FILES_FOR_R+="$BASE.clrStats.txt,"
         LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedZmw.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.zmwStats.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
     fi
 }
 
@@ -298,7 +298,7 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
   
     if [ "$PY_VER" == 2 ]; then
-        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
         echo >&2 "$FAILED_RLSTATS"
         exit 1
         }
@@ -307,7 +307,7 @@ for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.zmw.txt" "$BASE.readLens.subedZmw.txt" "$BASE.readLens.longSub.txt" "$BASE.zmwStats.txt" "$GROUPS_DESIRED" || {
+        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
         echo >&2 "$FAILED_RLSTATS"
         exit 1
         }
@@ -356,11 +356,11 @@ if [ $KEEP == false ]; then
         rm "$SCRAPS_NOBAM.seqNamesPlus"
         rm "$SUBREADS_NOBAM.seqNames"
         rm "$BASE.readLens.sub.txt"
-        rm "$BASE.readLens.zmw.txt"
+        rm "$BASE.readLens.clr.txt"
         rm "$BASE.readLens.longSub.txt"
-        rm "$BASE.readLens.subedZmw.txt"
+        rm "$BASE.readLens.subedClr.txt"
         rm "$BASE.SMRTcellStats.txt"
-        rm "$BASE.zmwStats.txt"
+        rm "$BASE.clrStats.txt"
 
         (( I++ ))
     done

@@ -1,13 +1,13 @@
 """
 This script is designed to generate statistics from read lengths for both
 subreads and scraps and output them in this format with one stat per line.
-Stats counted are: zmwTotalBases, zmwMeanReadLen, zmwMedianReadLen, zmwN50,
-zmwL50, subsTotalBases, subsMeanReadLen, subsMedianReadLen, subsN50, subsL50,
-subedZmwTotalBases, subedZmwMeanReadLen, subedZmwMedianReadLen, subedZmwN50, 
-subedZmwL50, longestSubTotalBases, longestSubMeanReadLen, 
+Stats counted are: clrTotalBases, clrMeanReadLen, clrMedianReadLen, clrN50,
+clrL50, subsTotalBases, subsMeanReadLen, subsMedianReadLen, subsN50, subsL50,
+subedClrTotalBases, subedClrMeanReadLen, subedClrMedianReadLen, subedClrN50, 
+subedClrL50, longestSubTotalBases, longestSubMeanReadLen, 
 longestSubMedianReadLen, longestSubN50, longestSubL50, readsRemoved.  Also 
-outputs all read lengths with one data point per line for subreads, zmw, and 
-zmw's containing subreads.  This version expects Python 3
+outputs all read lengths with one data point per line for subreads, clr, and 
+clr's containing subreads.  This version expects Python 3
 Created By David E. Hufnagel on Mon Jul 23, 2018
 Updated on July 30, 2018 to 1) calculate all stats for longest subreads, 2) 
 make a an output of format: 
@@ -24,10 +24,10 @@ subsInp = open(sys.argv[2])                  #m54080_180523_101119.subreads.seqN
 outStat = open(sys.argv[3], "w")             #m54080_180523_101119.SMRTcellStats.txt
 outReadLensSub = open(sys.argv[4], "w")      #m54080_180523_101119.readLens.sub.txt
 if groupsDesired == "a":
-    outReadLensZmw = open(sys.argv[5], "w")      #m54080_180523_101119.readLens.zmw.txt
-outReadLensSubedZmw = open(sys.argv[6], "w") #m54080_180523_101119.readLens.subedZmw.txt
+    outReadLensClr = open(sys.argv[5], "w")      #m54080_180523_101119.readLens.clr.txt
+outReadLensSubedClr = open(sys.argv[6], "w") #m54080_180523_101119.readLens.subedClr.txt
 outReadLensLongSub = open(sys.argv[7], "w")  #m54080_180523_101119.readLens.longSub.txt
-holeData = open(sys.argv[8], "w")            #m54080_180523_101119.zmwStats.txt
+holeData = open(sys.argv[8], "w")            #m54080_180523_101119.clrStats.txt
 
 
 
@@ -118,8 +118,8 @@ holeData.write(newLine)
 
 #Go through hole list and collect data from dicts
 if groupsDesired == "a":
-    zmwReadLens = []
-subReadLens = []; subedZmwReadLens = []; longestSubReadLens = []
+    clrReadLens = []
+subReadLens = []; subedClrReadLens = []; longestSubReadLens = []
 removedReads = 0
 for hole in holes:
     #gather data from dictionaries
@@ -156,23 +156,23 @@ for hole in holes:
             length = stop - start
             readLen += length
 
-        #output to holeData for non-subedZmws
+        #output to holeData for non-subedClrs
         if not subsHole:
             newLine = "%s\t%s\t%s\n" % (hole, "0", numAdapters)
             holeData.write(newLine) 
         
         if groupsDesired == "a":
-            zmwReadLens.append(readLen)            
+            clrReadLens.append(readLen)            
         
     if subsHole:
         if goodHole:
-            #add to subedZmwReadLens
+            #add to subedClrReadLens
             readLen = 0
             for coord in coords:
                 start = int(coord.split("_")[0]); stop = int(coord.split("_")[1])
                 length = stop - start
                 readLen += length                             
-            subedZmwReadLens.append(readLen)
+            subedClrReadLens.append(readLen)
     
         #add to subReadLens and longestSubReadLens
         longestReadLen = 0
@@ -185,7 +185,7 @@ for hole in holes:
         else:
             longestSubReadLens.append(longestReadLen)
             
-            #output to holeData for subedZmws
+            #output to holeData for subedClrs
             newLine = "%s\t%s\t%s\n" % (hole, len(subCoords), numAdapters)
             holeData.write(newLine)   
             
@@ -193,39 +193,39 @@ for hole in holes:
 #Calculate all stats from read length lists and output data
 ###first calculate total, mean, and median read lengths
 if groupsDesired == "a":
-    zmwTotal = sum(zmwReadLens)
+    clrTotal = sum(clrReadLens)
     longSubTotal = sum(longestSubReadLens)
     
-    zmwMean = Mean(zmwReadLens)
+    clrMean = Mean(clrReadLens)
     longSubMean = Mean(longestSubReadLens)
     
-    zmwMedian = Median(zmwReadLens)
+    clrMedian = Median(clrReadLens)
     longSubMedian = Median(longestSubReadLens)    
     
 subTotal = sum(subReadLens)  
-subedZmwTotal = sum(subedZmwReadLens)
+subedClrTotal = sum(subedClrReadLens)
 
 subMean = Mean(subReadLens)
-subedZmwMean = Mean(subedZmwReadLens)
+subedClrMean = Mean(subedClrReadLens)
 
 subMedian = Median(subReadLens)
-subedZmwMedian = Median(subedZmwReadLens)
+subedClrMedian = Median(subedClrReadLens)
 
 ###then calculate N50 and L50
 if groupsDesired == "a":
-    n50zmw, l50zmw = GetNvals(zmwReadLens)
+    n50clr, l50clr = GetNvals(clrReadLens)
     n50longSub, l50longSub = GetNvals(longestSubReadLens)
    
 n50sub, l50sub = GetNvals(subReadLens)
-n50subedZmw, l50subedZmw = GetNvals(subedZmwReadLens)
+n50subedClr, l50subedClr = GetNvals(subedClrReadLens)
 
 
-#Output all read lengths in 4 seperate files (one for subreads, one for zmw, 
-#  one for subed zmw, and one for longest subreads)
+#Output all read lengths in 4 seperate files (one for subreads, one for clr, 
+#  one for subed clr, and one for longest subreads)
 if groupsDesired == "a":
-    for length in zmwReadLens:
+    for length in clrReadLens:
         newLine = "%s\n" % (length)
-        outReadLensZmw.write(newLine)  
+        outReadLensClr.write(newLine)  
         
 for length in longestSubReadLens:
     newLine = "%s\n" % (length)
@@ -235,33 +235,33 @@ for length in subReadLens:
     newLine = "%s\n" % (length)
     outReadLensSub.write(newLine)
     
-for length in subedZmwReadLens:
+for length in subedClrReadLens:
     newLine = "%s\n" % (length)
-    outReadLensSubedZmw.write(newLine)
+    outReadLensSubedClr.write(newLine)
 
 
 #Output other stats in stats file
 if groupsDesired == "a":
-    newLine = "zmwTotalBases\tzmwMeanReadLen\tzmwMedianReadLen\tzmwN50\tzmwL50\t\
+    newLine = "clrTotalBases\tclrMeanReadLen\tclrMedianReadLen\tclrN50\tclrL50\t\
     subsTotalBases\tsubsMeanReadLen\tsubsMedianReadLen\tsubsN50\tsubsL50\t\
-    subedZmwTotalBases\tsubedZmwMeanReadLen\tsubedZmwMedianReadLen\tsubedZmwN50\t\
-    subedZmwL50\tlongestSubTotalBases\tlongestSubMeanReadLen\t\
+    subedClrTotalBases\tsubedClrMeanReadLen\tsubedClrMedianReadLen\tsubedClrN50\t\
+    subedClrL50\tlongestSubTotalBases\tlongestSubMeanReadLen\t\
     longestSubMedianReadLen\tlongestSubN50\tlongestSubL50\treadsRemoved\n"
 elif groupsDesired == "b":
-    newLine = "subedZmwTotalBases\tsubedZmwMeanReadLen\tsubedZmwMedianReadLen\t\
-    subedZmwN50\tsubedZmwL50\tsubsTotalBases\tsubsMeanReadLen\tsubsMedianReadLen\t\
+    newLine = "subedClrTotalBases\tsubedClrMeanReadLen\tsubedClrMedianReadLen\t\
+    subedClrN50\tsubedClrL50\tsubsTotalBases\tsubsMeanReadLen\tsubsMedianReadLen\t\
     subsN50\tsubsL50\treadsRemoved\n"  
 outStat.write(newLine)
 
 if groupsDesired == "a":
     newLine = "%s\t%.0f\t%s\t%s\t%s\t%s\t%.0f\t%s\t%s\t%s\t%s\t%.0f\t%s\t%s\t%s\t\
-    %s\t%.0f\t%s\t%s\t%s\t%s\n" % (zmwTotal,zmwMean,zmwMedian,n50zmw,l50zmw,subTotal,\
-    subMean,subMedian,n50sub,l50sub,subedZmwTotal,subedZmwMean,subedZmwMedian,\
-    n50subedZmw,l50subedZmw,longSubTotal,longSubMean,longSubMedian,n50longSub,\
+    %s\t%.0f\t%s\t%s\t%s\t%s\n" % (clrTotal,clrMean,clrMedian,n50clr,l50clr,subTotal,\
+    subMean,subMedian,n50sub,l50sub,subedClrTotal,subedClrMean,subedClrMedian,\
+    n50subedClr,l50subedClr,longSubTotal,longSubMean,longSubMedian,n50longSub,\
     l50longSub, removedReads)
 elif groupsDesired == "b":
-    newLine = "%s\t%.0f\t%s\t%s\t%s\t%s\t%.0f\t%s\t%s\t%s\t%s\n" % (subedZmwTotal,\
-    subedZmwMean,subedZmwMedian,n50subedZmw,l50subedZmw,subTotal,subMean,\
+    newLine = "%s\t%.0f\t%s\t%s\t%s\t%s\t%.0f\t%s\t%s\t%s\t%s\n" % (subedClrTotal,\
+    subedClrMean,subedClrMedian,n50subedClr,l50subedClr,subTotal,subMean,\
     subMedian,n50sub,l50sub, removedReads) 
 outStat.write(newLine)
 
@@ -273,7 +273,7 @@ subsInp.close()
 outStat.close()
 outReadLensSub.close()
 if groupsDesired == "a":
-    outReadLensZmw.close()
+    outReadLensClr.close()
 outReadLensLongSub.close()
-outReadLensSubedZmw.close()
+outReadLensSubedClr.close()
 holeData.close()

@@ -51,13 +51,13 @@ verbose = args[5]
 outFold = args[6]
 
 SMRTcellStatsFiles = c(); readLensSubFiles = c(); readLensLongSubFiles = c()
-readLensSubedZmwFiles = c(); zmwStatsFiles = c()
+readLensSubedClrFiles = c(); clrStatsFiles = c()
 SMRTcellStatsFLs = c(); readLensSubFLs = c(); readLensLongSubFLs = c()
-readLensSubedZmwFLs = c(); zmwStatsFLs = c()
+readLensSubedClrFLs = c(); clrStatsFLs = c()
 numFiles = length(allFiles)
 numFilesPerPair = 5
 if(groupsDesired == "a"){
-    readLensZmwFiles = c(); readLensZmwFLs = c()
+    readLensClrFiles = c(); readLensClrFLs = c()
     numFilesPerPair = 6
 }
 for(i in seq(numFiles)){
@@ -75,20 +75,20 @@ for(i in seq(numFiles)){
             readLensSubFLs = append(readLensSubFLs, fileLen)
         }
         else if (fileInd == 3) {
-            readLensZmwFiles = append(readLensZmwFiles, file)
-            readLensZmwFLs = append(readLensZmwFLs, fileLen)
+            readLensClrFiles = append(readLensClrFiles, file)
+            readLensClrFLs = append(readLensClrFLs, fileLen)
         }
         else if (fileInd == 4) {
-            readLensSubedZmwFiles = append(readLensSubedZmwFiles, file)
-            readLensSubedZmwFLs = append(readLensSubedZmwFLs, fileLen)
+            readLensSubedClrFiles = append(readLensSubedClrFiles, file)
+            readLensSubedClrFLs = append(readLensSubedClrFLs, fileLen)
         }
         else if (fileInd == 5) {
             readLensLongSubFiles = append(readLensLongSubFiles, file)
             readLensLongSubFLs = append(readLensLongSubFLs, fileLen)
         }
         else if (fileInd == 0) {
-            zmwStatsFiles = append(zmwStatsFiles, file)
-            zmwStatsFLs = append(zmwStatsFLs, fileLen-1) #-1 is to account for header
+            clrStatsFiles = append(clrStatsFiles, file)
+            clrStatsFLs = append(clrStatsFLs, fileLen-1) #-1 is to account for header
         }
         else {
             print("ERROR: R was given too many parameters")
@@ -105,16 +105,16 @@ for(i in seq(numFiles)){
             readLensSubFLs = append(readLensSubFLs, fileLen)
         }
         else if (fileInd == 3) {
-            readLensSubedZmwFiles = append(readLensSubedZmwFiles, file)
-            readLensSubedZmwFLs = append(readLensSubedZmwFLs, fileLen)
+            readLensSubedClrFiles = append(readLensSubedClrFiles, file)
+            readLensSubedClrFLs = append(readLensSubedClrFLs, fileLen)
         }
         else if (fileInd == 4) {
             readLensLongSubFiles = append(readLensLongSubFiles, file)
             readLensLongSubFLs = append(readLensLongSubFLs, fileLen)
         }
         else if (fileInd == 0) {
-            zmwStatsFiles = append(zmwStatsFiles, file)
-            zmwStatsFLs = append(zmwStatsFLs, fileLen-1) #-1 is to account for header
+            clrStatsFiles = append(clrStatsFiles, file)
+            clrStatsFLs = append(clrStatsFLs, fileLen-1) #-1 is to account for header
         }
         else {
             print("ERROR: R was given too many parameters")
@@ -159,38 +159,38 @@ for(fileName in SMRTcellStatsFiles){
 }
 rownames(SMRTcellStatsMatrix) = pairNames
 
-##Then for zmw stats files
-maxNumZMWstats = 0 
-for(FL in zmwStatsFLs){
+##Then for clr stats files
+maxNumCLRstats = 0 
+for(FL in clrStatsFLs){
     #FL = as.numeric(FL)
-    if (FL > maxNumZMWstats){
-        maxNumZMWstats = FL
+    if (FL > maxNumCLRstats){
+        maxNumCLRstats = FL
     }
 }
 
-numSubsPerZmwMatrix = matrix(data=NA, nrow=numPairs, ncol=maxNumZMWstats)
-numAdsPerZmwMatrix = matrix(data=NA, nrow=numPairs, ncol=maxNumZMWstats)
+numSubsPerClrMatrix = matrix(data=NA, nrow=numPairs, ncol=maxNumCLRstats)
+numAdsPerClrMatrix = matrix(data=NA, nrow=numPairs, ncol=maxNumCLRstats)
 i = 1
-for(fileName in zmwStatsFiles){
+for(fileName in clrStatsFiles){
     fdSub = as.numeric(as.matrix(read.table(fileName, header=TRUE))[,2])
     fdAd = as.numeric(as.matrix(read.table(fileName, header=TRUE))[,3])
-    diff = maxNumZMWstats-length(fdSub) #length(fdSub) = length(fdAd) 
+    diff = maxNumCLRstats-length(fdSub) #length(fdSub) = length(fdAd) 
     extra = rep(NA, diff)
     fdSub = append(fdSub, extra) 
     fdAd = append(fdAd, extra)
 
-    numSubsPerZmwMatrix[i,] = fdSub
-    numAdsPerZmwMatrix[i,] = fdAd
+    numSubsPerClrMatrix[i,] = fdSub
+    numAdsPerClrMatrix[i,] = fdAd
 
     i = i + 1
 }
-rownames(numSubsPerZmwMatrix) = pairNames; rownames(numAdsPerZmwMatrix) = pairNames
+rownames(numSubsPerClrMatrix) = pairNames; rownames(numAdsPerClrMatrix) = pairNames
 
 subReadLensMatrix = ReadLensFileToMatrix(readLensSubFiles, readLensSubFLs)
-subedZmwReadLensMatrix = ReadLensFileToMatrix(readLensSubedZmwFiles, readLensSubedZmwFLs)
+subedClrReadLensMatrix = ReadLensFileToMatrix(readLensSubedClrFiles, readLensSubedClrFLs)
 longSubReadLensMatrix = ReadLensFileToMatrix(readLensLongSubFiles, readLensLongSubFLs)
 if(groupsDesired == "a"){
-    zmwReadLensMatrix = ReadLensFileToMatrix(readLensZmwFiles, readLensZmwFLs)
+    clrReadLensMatrix = ReadLensFileToMatrix(readLensClrFiles, readLensClrFLs)
 }
 
 
@@ -217,42 +217,42 @@ if (verbose=="true"){
 
 
 #Make N50 and L50 bar plots
-subN50s = c(); subedZmwN50s = c()
-subL50s = c(); subedZmwL50s = c()
+subN50s = c(); subedClrN50s = c()
+subL50s = c(); subedClrL50s = c()
 if (groupsDesired == "a") {
-    zmwN50s = c(); zmwL50s = c()
+    clrN50s = c(); clrL50s = c()
     longSubN50s = c(); longSubL50s = c()
 }
 for(i in seq(numPairs)){
     if (groupsDesired == "a") {
         subN50 = SMRTcellStatsMatrix[i,9]    
-        zmwN50 = SMRTcellStatsMatrix[i,4]
-        subedZmwN50 = SMRTcellStatsMatrix[i,14]
+        clrN50 = SMRTcellStatsMatrix[i,4]
+        subedClrN50 = SMRTcellStatsMatrix[i,14]
         longSubN50 = SMRTcellStatsMatrix[i,19]
         subN50s = append(subN50s, subN50)
-        zmwN50s = append(zmwN50s, zmwN50)
-        subedZmwN50s = append(subedZmwN50s, subedZmwN50)
+        clrN50s = append(clrN50s, clrN50)
+        subedClrN50s = append(subedClrN50s, subedClrN50)
         longSubN50s = append(longSubN50s, longSubN50)
 
         subL50 = SMRTcellStatsMatrix[i,10]
-        zmwL50 = SMRTcellStatsMatrix[i,5]
-        subedZmwL50 = SMRTcellStatsMatrix[i,15]
+        clrL50 = SMRTcellStatsMatrix[i,5]
+        subedClrL50 = SMRTcellStatsMatrix[i,15]
         longSubL50 = SMRTcellStatsMatrix[i,20]
         subL50s = append(subL50s, subL50)
-        zmwL50s = append(zmwL50s, zmwL50)
-        subedZmwL50s = append(subedZmwL50s, subedZmwL50)
+        clrL50s = append(clrL50s, clrL50)
+        subedClrL50s = append(subedClrL50s, subedClrL50)
         longSubL50s = append(longSubL50s, longSubL50)
     }
     else if (groupsDesired == "b") {
         subN50 = SMRTcellStatsMatrix[i,9]
-        subedZmwN50 = SMRTcellStatsMatrix[i,4]
+        subedClrN50 = SMRTcellStatsMatrix[i,4]
         subN50s = append(subN50s, subN50)
-        subedZmwN50s = append(subedZmwN50s, subedZmwN50)
+        subedClrN50s = append(subedClrN50s, subedClrN50)
 
         subL50 = SMRTcellStatsMatrix[i,10]
-        subedZmwL50 = SMRTcellStatsMatrix[i,5]
+        subedClrL50 = SMRTcellStatsMatrix[i,5]
         subL50s = append(subL50s, subL50)
-        subedZmwL50s = append(subedZmwL50s, subedZmwL50)
+        subedClrL50s = append(subedClrL50s, subedClrL50)
     }
 }
 
@@ -272,11 +272,11 @@ plotName = sprintf("%s/n50s.pdf",outFold)
 pdf(plotName)
 par(omi=c(0.8,0.2,0,0), mgp=c(3.5,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 if (groupsDesired == "a") {
-    allN50s = cbind(subedZmwN50s, zmwN50s, longSubN50s, subN50s)
-    theseNames=c("subedZMWs","ZMWs","longestSubreads","subreads")
+    allN50s = cbind(subedClrN50s, clrN50s, longSubN50s, subN50s)
+    theseNames=c("subedCLRs","CLRs","longestSubreads","subreads")
 }else if (groupsDesired == "b") {
-    allN50s = cbind(subedZmwN50s, subN50s)
-    theseNames=c("subedZMWs","subreads")
+    allN50s = cbind(subedClrN50s, subN50s)
+    theseNames=c("subedCLRs","subreads")
 }
 barplot(allN50s, main="N50 summary", ylab="N50", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(allN50s)*1.2))
 legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=textSize)
@@ -287,9 +287,9 @@ if (plotsDesired == "a"){
     pdf(plotName)
     par(omi=c(0.8,0,0,0), mgp=c(3.8,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
     if (groupsDesired == "a") {
-        allL50s = cbind(zmwL50s, subedZmwL50s, subL50s, longSubL50s)
+        allL50s = cbind(clrL50s, subedClrL50s, subL50s, longSubL50s)
     }else if (groupsDesired == "b") {
-        allL50s = cbind(subedZmwL50s, subL50s)
+        allL50s = cbind(subedClrL50s, subL50s)
     }
     barplot(allL50s, main="L50 summary", ylab="L50", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(allL50s)*1.4))
     legend("topright", legend=pairNames, pch=15, col=rainbow(numPairs, s=0.72), cex=textSize-0.12)
@@ -299,46 +299,46 @@ if (plotsDesired == "a"){
 
 #Make data table with total bases, number of reads, mean and median read 
 #  length, N50, and L50 for the following groups: subreads, longest subreads,
-#  zmws, and zmws with subreads, as well as PSR, and ZOR. Also build total 
+#  clrs, and clrs with subreads, as well as PSR, and ZOR. Also build total 
 #  bases arrays and min, max, and mean values for longest subread lengths for future use.
 plotName = sprintf("%s/summaryTable.txt",outFold)
 sink(plotName)
-totalBasesSubedZmwAr = c(); totalBasesSubAr = c()
+totalBasesSubedClrAr = c(); totalBasesSubAr = c()
 if (groupsDesired == "a") {
-    cat("SMRTcell\tnumReadsZmw\tnumReadsSubedZmw\tnumReadsSubread\tnumReadsLongestSub\ttotalBasesZmw\ttotalBasesSubedZmw\ttotalBasesSubread\ttotalBasesLongestSub\tmeanReadLenZmw\tmeanReadLenSubedZmw\tmeanReadLenSubread\tmeanReadLenLongestSub\tmedianReadLenZmw\tmedianReadLenSubedZmw\tmedianReadLenSubread\tmedianReadLenLongestSub\tn50Zmw\tn50SubedZmw\tn50Subread\tn50LongestSub\tl50Zmw\tl50SubedZmw\tl50Subread\tl50LongestSub\tPSR\tZOR\n")
-    totalBasesZmwAr = c(); totalBasesLongSubAr = c()
+    cat("SMRTcell\tnumReadsClr\tnumReadsSubedClr\tnumReadsSubread\tnumReadsLongestSub\ttotalBasesClr\ttotalBasesSubedClr\ttotalBasesSubread\ttotalBasesLongestSub\tmeanReadLenClr\tmeanReadLenSubedClr\tmeanReadLenSubread\tmeanReadLenLongestSub\tmedianReadLenClr\tmedianReadLenSubedClr\tmedianReadLenSubread\tmedianReadLenLongestSub\tn50Clr\tn50SubedClr\tn50Subread\tn50LongestSub\tl50Clr\tl50SubedClr\tl50Subread\tl50LongestSub\tPSR\tZOR\n")
+    totalBasesClrAr = c(); totalBasesLongSubAr = c()
     minLongSubRLs = c(); maxLongSubRLs = c(); meanLongSubRLs = c()
 }else if (groupsDesired == "b") {
-    cat("SMRTcell\tnumReadsSubedZmw\tnumReadsSubread\ttotalBasesSubedZmw\ttotalBasesSubread\tmeanReadLenSubedZmw\tmeanReadLenSubread\tmedianReadLenSubedZmw\tmedianReadLenSubread\tn50SubedZmw\tn50Subread\tl50SubedZmw\tl50Subread\tPSR\tZOR\n")
+    cat("SMRTcell\tnumReadsSubedClr\tnumReadsSubread\ttotalBasesSubedClr\ttotalBasesSubread\tmeanReadLenSubedClr\tmeanReadLenSubread\tmedianReadLenSubedClr\tmedianReadLenSubread\tn50SubedClr\tn50Subread\tl50SubedClr\tl50Subread\tPSR\tZOR\n")
 }
 for(i in seq(numPairs)){
     #Gather data
     pairName = pairNames[i]
-    numSubedZmwReads = readLensSubedZmwFLs[i]
+    numSubedClrReads = readLensSubedClrFLs[i]
     numSubreads = readLensSubFLs[i]
 
-    totalSubedZmwBases = sum(subedZmwReadLensMatrix[i,][!is.na(subedZmwReadLensMatrix[i,])])
+    totalSubedClrBases = sum(subedClrReadLensMatrix[i,][!is.na(subedClrReadLensMatrix[i,])])
     totalSubBases = sum(subReadLensMatrix[i,][!is.na(subReadLensMatrix[i,])])
-    totalBasesSubedZmwAr = append(totalBasesSubedZmwAr, totalSubedZmwBases)
+    totalBasesSubedClrAr = append(totalBasesSubedClrAr, totalSubedClrBases)
     totalBasesSubAr = append(totalBasesSubAr, totalSubBases)
 
     subN50 = subN50s[i]
-    subedZmwN50 = subedZmwN50s[i]
+    subedClrN50 = subedClrN50s[i]
 
     subL50 = subL50s[i]
-    subedZmwL50 = subedZmwL50s[i]
+    subedClrL50 = subedClrL50s[i]
 
     if (groupsDesired == "a") {
-        numZmwReads = readLensZmwFLs[i]
+        numClrReads = readLensClrFLs[i]
         numLongSubs = readLensLongSubFLs[i]
 
-        totalZmwBases = sum(zmwReadLensMatrix[i,][!is.na(zmwReadLensMatrix[i,])])
+        totalClrBases = sum(clrReadLensMatrix[i,][!is.na(clrReadLensMatrix[i,])])
         totalLongSubBases = sum(longSubReadLensMatrix[i,][!is.na(longSubReadLensMatrix[i,])])
-        totalBasesZmwAr = append(totalBasesZmwAr, totalZmwBases)
+        totalBasesClrAr = append(totalBasesClrAr, totalClrBases)
         totalBasesLongSubAr = append(totalBasesLongSubAr, totalLongSubBases)
 
-        meanZmwRL = SMRTcellStatsMatrix[i,2]
-        meanSubedZmwRL = SMRTcellStatsMatrix[i,12]
+        meanClrRL = SMRTcellStatsMatrix[i,2]
+        meanSubedClrRL = SMRTcellStatsMatrix[i,12]
         meanSubreadRL = SMRTcellStatsMatrix[i,7]
         meanLongSubRL = SMRTcellStatsMatrix[i,17]
 
@@ -348,21 +348,21 @@ for(i in seq(numPairs)){
         maxLongSubRLs = append(maxLongSubRLs, maxLongSubRL)
         meanLongSubRLs = append(meanLongSubRLs, meanLongSubRL)
 
-        medianZmwRL = SMRTcellStatsMatrix[i,3]
-        medianSubedZmwRL = SMRTcellStatsMatrix[i,13]
+        medianClrRL = SMRTcellStatsMatrix[i,3]
+        medianSubedClrRL = SMRTcellStatsMatrix[i,13]
         medianSubreadRL = SMRTcellStatsMatrix[i,8]
         medianLongSubRL = SMRTcellStatsMatrix[i,18]
 
-        zmwN50 = zmwN50s[i]
+        clrN50 = clrN50s[i]
         longSubN50 = longSubN50s[i]
 
-        zmwL50 = zmwL50s[i]
+        clrL50 = clrL50s[i]
         longSubL50 = longSubL50s[i]
     }else if (groupsDesired == "b") {
-        meanSubedZmwRL = SMRTcellStatsMatrix[i,2]
+        meanSubedClrRL = SMRTcellStatsMatrix[i,2]
         meanSubreadRL = SMRTcellStatsMatrix[i,7]
 
-        medianSubedZmwRL = SMRTcellStatsMatrix[i,3]
+        medianSubedClrRL = SMRTcellStatsMatrix[i,3]
         medianSubreadRL = SMRTcellStatsMatrix[i,8]
     }
 
@@ -371,9 +371,9 @@ for(i in seq(numPairs)){
 
     #Output the data to a summary table
     if (groupsDesired == "a") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numZmwReads, numSubedZmwReads, numSubreads, numLongSubs, totalZmwBases, totalSubedZmwBases, totalSubBases, totalLongSubBases, meanZmwRL, meanSubedZmwRL, meanSubreadRL, meanLongSubRL, medianZmwRL, medianSubedZmwRL, medianSubreadRL, medianLongSubRL, zmwN50, subedZmwN50, subN50, longSubN50, zmwL50, subedZmwL50, subL50, longSubL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numClrReads, numSubedClrReads, numSubreads, numLongSubs, totalClrBases, totalSubedClrBases, totalSubBases, totalLongSubBases, meanClrRL, meanSubedClrRL, meanSubreadRL, meanLongSubRL, medianClrRL, medianSubedClrRL, medianSubreadRL, medianLongSubRL, clrN50, subedClrN50, subN50, longSubN50, clrL50, subedClrL50, subL50, longSubL50, psr, zor)
     }else if (groupsDesired == "b") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedZmwReads, numSubreads, totalSubedZmwBases, totalSubBases, meanSubedZmwRL, meanSubreadRL, medianSubedZmwRL, medianSubreadRL, subedZmwN50, subN50, subedZmwL50, subL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedClrReads, numSubreads, totalSubedClrBases, totalSubBases, meanSubedClrRL, meanSubreadRL, medianSubedClrRL, medianSubreadRL, subedClrN50, subN50, subedClrL50, subL50, psr, zor)
     }
     cat(toOut)
 }
@@ -385,36 +385,36 @@ if (plotsDesired == "a") {
     for(i in seq(numPairs)){
         #Gather data
         subRLs = subReadLensMatrix[i,]
-        subedZmwRLs = subedZmwReadLensMatrix[i,]
+        subedClrRLs = subedClrReadLensMatrix[i,]
 
         #Create strings to use for plotting
         histName = sprintf("%s/%s.readLenHists.pdf", outFold, pairNames[i])
         subTitle = sprintf("Histogram of subread read lengths for %s", pairNames[i])
-        subedZmwTitle = sprintf("Histogram of subed-Zmw read lengths for %s", pairNames[i])
+        subedClrTitle = sprintf("Histogram of subed-Clr read lengths for %s", pairNames[i])
 
         #Determine the number of breaks to use
         subBreaks = round((max(subRLs, na.rm=TRUE) / 1000), 0)
-        subedZmwBreaks = round((max(subedZmwRLs, na.rm=TRUE) / 1000), 0)
+        subedClrBreaks = round((max(subedClrRLs, na.rm=TRUE) / 1000), 0)
 
         if (groupsDesired == "a") {
             #Gather data
-            zmwRLs = zmwReadLensMatrix[i,]
+            clrRLs = clrReadLensMatrix[i,]
             longSubRLs = longSubReadLensMatrix[i,]
 
             #Create strings to use for plotting
-            zmwTitle = sprintf("Histogram of ZMW read lengths for %s", pairNames[i])
+            clrTitle = sprintf("Histogram of CLR read lengths for %s", pairNames[i])
             longSubTitle = sprintf("Histogram of longest subread read lengths for %s", pairNames[i])
     
             #Determine the number of breaks to use
-            zmwBreaks = round((max(zmwRLs, na.rm=TRUE) / 1000), 0)
+            clrBreaks = round((max(clrRLs, na.rm=TRUE) / 1000), 0)
             longSubBreaks = round((max(longSubRLs, na.rm=TRUE) / 1000), 0)
 
             #Plot
             pdf(histName); par(lwd=1.5, mfrow=c(4,1))
 
             hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD")
-            hist(zmwRLs, xlab="Read Length (bp)", main=zmwTitle, breaks=zmwBreaks, col="#0276FD")
-            hist(subedZmwRLs, xlab="Read Length (bp)", main=subedZmwTitle, breaks=subedZmwBreaks, col="#0276FD")
+            hist(clrRLs, xlab="Read Length (bp)", main=clrTitle, breaks=clrBreaks, col="#0276FD")
+            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="#0276FD")
             hist(longSubRLs, xlab="Read Length (bp)", main=longSubTitle, breaks=longSubBreaks, col="#0276FD")
             dev.off()
         }else if (groupsDesired == "b") {
@@ -422,7 +422,7 @@ if (plotsDesired == "a") {
             pdf(histName); par(lwd=1.5, mfrow=c(2,1))
 
             hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD")
-            hist(subedZmwRLs, xlab="Read Length (bp)", main=subedZmwTitle, breaks=subedZmwBreaks, col="#0276FD")
+            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="#0276FD")
             invisible(dev.off())
         }
     }
@@ -434,11 +434,11 @@ plotName = sprintf("%s/totalBasesBarplot.pdf",outFold)
 pdf(plotName)
 par(omi=c(0.8,0,0,0), mgp=c(3.6,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 if (groupsDesired == "a") {
-    totalBasesArray = cbind(totalBasesZmwAr, totalBasesSubedZmwAr, totalBasesSubAr, totalBasesLongSubAr)
-    theseNames=c("ZMWs", "subedZMWs","subreads", "longestSubreads")
+    totalBasesArray = cbind(totalBasesClrAr, totalBasesSubedClrAr, totalBasesSubAr, totalBasesLongSubAr)
+    theseNames=c("CLRs", "subedCLRs","subreads", "longestSubreads")
 }else if (groupsDesired == "b") {
-    totalBasesArray = cbind(totalBasesSubedZmwAr, totalBasesSubAr)
-    theseNames=c("subedZMWs","subreads")
+    totalBasesArray = cbind(totalBasesSubedClrAr, totalBasesSubAr)
+    theseNames=c("subedCLRs","subreads")
 }
 
 barplot(totalBasesArray/1000000, main="Total Bases Barplot", ylab="Total Bases (Mb)", las=2, beside=TRUE, names.arg=theseNames, col=rainbow(numPairs, s=0.72), ylim=c(0,max(totalBasesArray)*1.15/1000000))
@@ -474,31 +474,31 @@ if (plotsDesired != "b") {
 
 #Make read length histograms
 if (plotsDesired == "a") {
-    ##Make read length histograms of subreads/subedZMW
+    ##Make read length histograms of subreads/subedCLR
     for(i in seq(numPairs)){
-        plotName = sprintf("%s/%s.subsPerSubedZmwHist.pdf", outFold, pairNames[i])
+        plotName = sprintf("%s/%s.subsPerSubedClrHist.pdf", outFold, pairNames[i])
         pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
-        numSubsPerSubedZmwMatrixi = numSubsPerZmwMatrix[i,][numSubsPerZmwMatrix[i,]!=0]
-        hist(numSubsPerSubedZmwMatrixi, breaks=max(numSubsPerSubedZmwMatrixi, na.rm=TRUE), xlim=c(1,6), main="Histogram of Subreads per subedZMW", xlab="Subreads per subedZMW", col="#0276FD")
+        numSubsPerSubedClrMatrixi = numSubsPerClrMatrix[i,][numSubsPerClrMatrix[i,]!=0]
+        hist(numSubsPerSubedClrMatrixi, breaks=max(numSubsPerSubedClrMatrixi, na.rm=TRUE), xlim=c(1,6), main="Histogram of Subreads per subedCLR", xlab="Subreads per subedCLR", col="#0276FD")
         invisible(dev.off())
     }
 
-    ##Make read length histograms of subreads/ZMW
+    ##Make read length histograms of subreads/CLR
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("%s/%s.subsPerZmwHist.pdf", outFold, pairNames[i])
+            plotName = sprintf("%s/%s.subsPerClrHist.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
-            hist(numSubsPerZmwMatrix[i,], max(numSubsPerZmwMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Subreads per ZMW", xlab="Subreads per ZMW", col="#0276FD")
+            hist(numSubsPerClrMatrix[i,], max(numSubsPerClrMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Subreads per CLR", xlab="Subreads per CLR", col="#0276FD")
             invisible(dev.off())
         }
     }
 
-    ##Make read length histograms of adapters/ZMW
+    ##Make read length histograms of adapters/CLR
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("%s/%s.adsPerZmwHists.pdf", outFold, pairNames[i])
+            plotName = sprintf("%s/%s.adsPerClrHists.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5)
-            hist(numAdsPerZmwMatrix[i,], breaks=max(numAdsPerZmwMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per Zmw", xlab="Adapters per ZMW", col="#0276FD")
+            hist(numAdsPerClrMatrix[i,], breaks=max(numAdsPerClrMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per Clr", xlab="Adapters per CLR", col="#0276FD")
             invisible(dev.off())
         }
     }
@@ -515,12 +515,12 @@ if (plotsDesired != "b") {
     points(subN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())
 
-    ##Make boxplots of subedZmw sizes with N50 shown 
-    plotName = sprintf("%s/subedZmwSizesBoxplots.pdf",outFold)
+    ##Make boxplots of subedClr sizes with N50 shown 
+    plotName = sprintf("%s/subedClrSizesBoxplots.pdf",outFold)
     pdf(plotName)
     par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
-    boxplot(t(subedZmwReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of SubedZMW Sizes with N50", las=2)
-    points(subedZmwN50s/1000, pch=18, col="#0276FD", cex=2)
+    boxplot(t(subedClrReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of SubedCLR Sizes with N50", las=2)
+    points(subedClrN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())
 }
 
