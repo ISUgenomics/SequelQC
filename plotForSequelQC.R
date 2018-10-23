@@ -498,7 +498,7 @@ if (plotsDesired == "a") {
         for(i in seq(numPairs)){
             plotName = sprintf("%s/%s.adsPerClrHists.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5)
-            hist(numAdsPerClrMatrix[i,], breaks=max(numAdsPerClrMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per Clr", xlab="Adapters per CLR", col="#0276FD")
+            hist(numAdsPerClrMatrix[i,], breaks=max(numAdsPerClrMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per CLR", xlab="Adapters per CLR", col="#0276FD")
             invisible(dev.off())
         }
     }
