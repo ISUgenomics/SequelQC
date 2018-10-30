@@ -4,7 +4,7 @@ _SequelQC_ is a quality check program specifically for the PacBio Sequel platfor
 ## Installation
 
 ### Dependencies
-The script has been tested in Linux environment and it requires following programs to be in the path
+_SequelQC_ has been tested in a Linux environment and it requires following programs to be in the path
 1. Samtools
 2. Python (version 2 or 3)
 3. R
@@ -45,7 +45,7 @@ bash SequelQC.sh
 
 This should bring up the help menu.
 
-_SequelQC_ has two required arguments, `-u` and `-c`. The argument `-u` requires a file listing all the locations of the s`u`bread bam files and `-c` requires a file listing the location of all s`c`raps bam file.  In each case the format is simply one filename per line.  Note that _SequelQC_ requires scraps files to run so don't throw them away!
+_SequelQC_ has two required arguments, `-u` and `-c`. The argument `-u` requires a file listing all the locations of the s`u`bread BAM files and `-c` requires a file listing the location of all s`c`raps BAM files.  In each case the format is simply one filename per line.  Note that _SequelQC_ requires scraps files to run so don't throw them away!
 
 The easy way to generate these files is using the find command:
 
@@ -72,7 +72,7 @@ _SequelQC_ has many other arguments that are worth considering before running it
 
 One important argument is `-n`, which sets the number of threads to use for samtools.  The default is 1, but the more threads used the faster the program will run.  
 
-Another optional argument is `-o`, which sets the directory for outputting all final tables and plots.  The default is to make a folder called SequelQCresults and put the final table and plots there.  If the folder SequelQCresults is already present when you run _SequelQC_, all contents within the folder will be erased before the new results are written there.  For that reason if you plan to run the program on multiple datasets you'll either want to do it in seperate folders or use the -o option to create multiple output folders.
+Another optional argument is `-o`, which sets the directory for outputting all final tables and plots.  The default is to make a folder called SequelQCresults and put the final table and plots there.  If the folder SequelQCresults is already present when you run _SequelQC_, all contents within the folder will be erased before the new results are written there.  For that reason if you plan to run the program on multiple datasets you'll either want to do it in seperate folders or use the `-o` option to create multiple output folders.
 
 The `-v` argument allows the user to get updates on what _SequelQC_ is doing as it does it, and the `-k` argument tells _SequelQC_ to keep all intermediate files.  These files are created in the directory _SequelQC_ is ran in and are normally deleted before the program finishes.  The `-k` parameter is very useful for rerunning _SequelQC_ using different plotting parameters or using a custom R script.  It could also be used to give the user raw data they would not otherwise be given. Along with the `-k` parameter, if the user has already generated intermediate files, the user can comment out the lines in `SequelQC.sh` that call samtools and Python.  This will cut out the large majority of the runtime.  As for using a custom R script for plotting the user can make their own plotting script or modify ours and then simply replace the name of our R scirpt in `SequelQC.sh` with the name of the user's script.
 
