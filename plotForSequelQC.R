@@ -371,9 +371,9 @@ for(i in seq(numPairs)){
 
     #Output the data to a summary table
     if (groupsDesired == "a") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numClrReads, numSubedClrReads, numSubreads, numLongSubs, totalClrBases, totalSubedClrBases, totalSubBases, totalLongSubBases, meanClrRL, meanSubedClrRL, meanSubreadRL, meanLongSubRL, medianClrRL, medianSubedClrRL, medianSubreadRL, medianLongSubRL, clrN50, subedClrN50, subN50, longSubN50, clrL50, subedClrL50, subL50, longSubL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numCLRReads, numSubedCLRReads, numSubreads, numLongSubs, totalCLRBases, totalSubedCLRBases, totalSubBases, totalLongSubBases, meanCLRRL, meanSubedCLRRL, meanSubreadRL, meanLongSubRL, medianCLRRL, medianSubedCLRRL, medianSubreadRL, medianLongSubRL, clrN50, subedCLRN50, subN50, longSubN50, clrL50, subedCLRL50, subL50, longSubL50, psr, zor)
     }else if (groupsDesired == "b") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedClrReads, numSubreads, totalSubedClrBases, totalSubBases, meanSubedClrRL, meanSubreadRL, medianSubedClrRL, medianSubreadRL, subedClrN50, subN50, subedClrL50, subL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedCLRReads, numSubreads, totalSubedCLRBases, totalSubBases, meanSubedCLRRL, meanSubreadRL, medianSubedCLRRL, medianSubreadRL, subedCLRN50, subN50, subedCLRL50, subL50, psr, zor)
     }
     cat(toOut)
 }
