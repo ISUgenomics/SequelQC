@@ -12,12 +12,12 @@ function print_help_menu() {
                   This is the help menu for SequelQC version 1.0.0
     ###########################################################################
     Dependencies for this program are samtools, Python, and R.
-    For this help menu use the parameter -h or no parameters.
-    Required parameters are -u and -c
+    For this help menu use the argument -h or no arguments.
+    Required arguments are -u and -c
 
     Notes: a subedCLR is a CLR containing at least one subread
 
-    All parameters:
+    All arguments:
     -u : A file listing the names of subreads .bam sequence files
     -c : A file listing the names of scraps .bam sequence files
     -n : The number of threads to use for extracting information from .bam 
