@@ -371,9 +371,9 @@ for(i in seq(numPairs)){
 
     #Output the data to a summary table
     if (groupsDesired == "a") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numCLRReads, numSubedCLRReads, numSubreads, numLongSubs, totalCLRBases, totalSubedCLRBases, totalSubBases, totalLongSubBases, meanCLRRL, meanSubedCLRRL, meanSubreadRL, meanLongSubRL, medianCLRRL, medianSubedCLRRL, medianSubreadRL, medianLongSubRL, clrN50, subedCLRN50, subN50, longSubN50, clrL50, subedCLRL50, subL50, longSubL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numClrReads, numSubedClrReads, numSubreads, numLongSubs, totalClrBases, totalSubedClrBases, totalSubBases, totalLongSubBases, meanClrRL, meanSubedClrRL, meanSubreadRL, meanLongSubRL, medianClrRL, medianSubedClrRL, medianSubreadRL, medianLongSubRL, clrN50, subedClrN50, subN50, longSubN50, clrL50, subedClrL50, subL50, longSubL50, psr, zor)
     }else if (groupsDesired == "b") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedCLRReads, numSubreads, totalSubedCLRBases, totalSubBases, meanSubedCLRRL, meanSubreadRL, medianSubedCLRRL, medianSubreadRL, subedCLRN50, subN50, subedCLRL50, subL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedClrReads, numSubreads, totalSubedClrBases, totalSubBases, meanSubedClrRL, meanSubreadRL, medianSubedClrRL, medianSubreadRL, subedClrN50, subN50, subedClrL50, subL50, psr, zor)
     }
     cat(toOut)
 }
@@ -451,31 +451,41 @@ if (plotsDesired != "b") {
     plotName = sprintf("%s/zors.pdf",outFold)
     pdf(plotName, height=2.5)
     par(mar=c(2.5,1,9,1))
-    xStart = min(zors)*0.9 #Determine xlims for ZORs 
-    xStop = max(zors)*1.1
+    xStart = min(zors)-0.03 #Determine xlims for ZORs 
+    xStop = max(zors)+0.03
     if (xStart < 0) {
 	xStart = 0
     }
     if (xStop > 1.0) {
 	xStop = 1.0
     }
-    plot(-1,-1, xlim=c(xStart,xStop), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="ZORs") #Start with an empty plot
+    plot(-1,-1, xlim=c(xStart,xStop), ylim=c(0,1.0), xaxt="n", yaxt="n", ylab="", xlab="") #Start with an empty plot
     abline(v=zors, lwd=1.5, col="black") #Then attach vertical lines for ZORs
     axis(1, at=seq(0,1,0.05))
     for(i in seq(numPairs)){ #Then add SMRTcell labels
-        mtext(pairNames[i], side=3, at=c(zors[i],1.1), las=2, cex=0.9, line=0.2)
+        mtext(pairNames[i], side=3, at=c(zors[i],1.1), las=2, cex=0.79, line=0.2)
     }
+    title("ZORs", line=7.9) #Finally add the title
     invisible(dev.off())
 
     plotName = sprintf("%s/psrs.pdf",outFold)
     pdf(plotName, height=2.5)
     par(mar=c(2.5,1,9,1))
-    plot(-1,-1, xlim=c(0,1), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="PSRs") #Start with an empty plot
+    xStart = min(psrs)-0.03 #Determine xlims for ZORs 
+    xStop = max(psrs)+0.03
+    if (xStart < 0) {
+        xStart = 0
+    }
+    if (xStop > 1.0) {
+        xStop = 1.0
+    }
+    plot(-1,-1, xlim=c(xStart,xStop), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="") #Start with an empty plot
     abline(v=psrs, lwd=1.5, col="black") #Then attach vertical lines for PSRs
     axis(1, at=seq(0,1,0.05))
     for(i in seq(numPairs)){ #Then add SMRTcell labels
-        mtext(pairNames[i], side=3, at=c(psrs[i],1.1), las=2, cex=0.9, line=0.2)
+        mtext(pairNames[i], side=3, at=c(psrs[i],1.1), las=2, cex=0.79, line=0.2)
     }
+    title("PSRs", line=7.9) #Finally add the title
     invisible(dev.off())
 }
 
