@@ -305,11 +305,11 @@ plotName = sprintf("%s/summaryTable.txt",outFold)
 sink(plotName)
 totalBasesSubedClrAr = c(); totalBasesSubAr = c()
 if (groupsDesired == "a") {
-    cat("SMRTcell\tnumReadsClr\tnumReadsSubedClr\tnumReadsSubread\tnumReadsLongestSub\ttotalBasesClr\ttotalBasesSubedClr\ttotalBasesSubread\ttotalBasesLongestSub\tmeanReadLenClr\tmeanReadLenSubedClr\tmeanReadLenSubread\tmeanReadLenLongestSub\tmedianReadLenClr\tmedianReadLenSubedClr\tmedianReadLenSubread\tmedianReadLenLongestSub\tn50Clr\tn50SubedClr\tn50Subread\tn50LongestSub\tl50Clr\tl50SubedClr\tl50Subread\tl50LongestSub\tPSR\tZOR\n")
+    cat("SMRTcell\tnumReadsCLR\tnumReadsSubedCLR\tnumReadsSubread\tnumReadsLongestSub\ttotalBasesCLR\ttotalBasesSubedCLR\ttotalBasesSubread\ttotalBasesLongestSub\tmeanReadLenCLR\tmeanReadLenSubedCLR\tmeanReadLenSubread\tmeanReadLenLongestSub\tmedianReadLenCLR\tmedianReadLenSubedCLR\tmedianReadLenSubread\tmedianReadLenLongestSub\tn50CLR\tn50SubedCLR\tn50Subread\tn50LongestSub\tl50CLR\tl50SubedCLR\tl50Subread\tl50LongestSub\tPSR\tZOR\n")
     totalBasesClrAr = c(); totalBasesLongSubAr = c()
     minLongSubRLs = c(); maxLongSubRLs = c(); meanLongSubRLs = c()
 }else if (groupsDesired == "b") {
-    cat("SMRTcell\tnumReadsSubedClr\tnumReadsSubread\ttotalBasesSubedClr\ttotalBasesSubread\tmeanReadLenSubedClr\tmeanReadLenSubread\tmedianReadLenSubedClr\tmedianReadLenSubread\tn50SubedClr\tn50Subread\tl50SubedClr\tl50Subread\tPSR\tZOR\n")
+    cat("SMRTcell\tnumReadsSubedCLR\tnumReadsSubread\ttotalBasesSubedCLR\ttotalBasesSubread\tmeanReadLenSubedCLR\tmeanReadLenSubread\tmedianReadLenSubedCLR\tmedianReadLenSubread\tn50SubedCLR\tn50Subread\tl50SubedCLR\tl50Subread\tPSR\tZOR\n")
 }
 for(i in seq(numPairs)){
     #Gather data
@@ -451,7 +451,15 @@ if (plotsDesired != "b") {
     plotName = sprintf("%s/zors.pdf",outFold)
     pdf(plotName, height=2.5)
     par(mar=c(2.5,1,9,1))
-    plot(-1,-1, xlim=c(0,1), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="ZORs") #Start with an empty plot
+    xStart = min(zors)*0.9 #Determine xlims for ZORs 
+    xStop = max(zors)*1.1
+    if (xStart < 0) {
+	xStart = 0
+    }
+    if (xStop > 1.0) {
+	xStop = 1.0
+    }
+    plot(-1,-1, xlim=c(xStart,xStop), ylim=c(0,1), xaxt="n", yaxt="n", ylab="", xlab="", main="ZORs") #Start with an empty plot
     abline(v=zors, lwd=1.5, col="black") #Then attach vertical lines for ZORs
     axis(1, at=seq(0,1,0.05))
     for(i in seq(numPairs)){ #Then add SMRTcell labels
