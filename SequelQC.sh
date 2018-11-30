@@ -288,10 +288,10 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
     fi
 
     NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
-    #samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
-    #echo >&2 "$FAILED_EXTRACTION"
-    #exit 1
-    #}
+    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
+    echo >&2 "$FAILED_EXTRACTION"
+    exit 1
+    }
     (( I++ ))
 done
 
@@ -305,10 +305,10 @@ if [ $NOSCRAPS == false ]; then
         fi
 
         NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-        #samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-        #echo >&2 "$FAILED_EXTRACTION"
-        #exit 1
-        #}
+        samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+        echo >&2 "$FAILED_EXTRACTION"
+        exit 1
+        }
         (( I++ ))
     done
 fi
@@ -329,33 +329,33 @@ for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
  
     if [ "$PY_VER" == 2 ]; then
-        #if [ $NOSCRAPS == true ]; then
-            #python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
-            #echo >&2 "$FAILED_RLSTATS"
-            #exit 1
-            #}
-        #else
-            #python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            #echo >&2 "$FAILED_RLSTATS"
-            #exit 1
-            #}
-        #fi
+        if [ $NOSCRAPS == true ]; then
+            python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        else
+            python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        #if [ $NOSCRAPS == true ]; then
-            #python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
-            #echo >&2 "$FAILED_RLSTATS"
-            #exit 1
-            #}
-        #else
-            #python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            #echo >&2 "$FAILED_RLSTATS"
-            #exit 1
-            #}
-        #fi
+        if [ $NOSCRAPS == true ]; then
+            python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        else
+            python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
