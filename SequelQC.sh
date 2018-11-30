@@ -9,11 +9,11 @@ function print_help_menu() {
     cat <<helpChunk
     
     ###########################################################################
-                  This is the help menu for SequelQC version 1.0.0
+                  This is the help menu for SequelQC version 1.1.0
     ###########################################################################
     Dependencies for this program are samtools, Python, and R.
     For this help menu use the argument -h or no arguments.
-    Required arguments are -u and -c
+    Required argument: -u
 
     Notes: a subedCLR is a CLR containing at least one subread
 
@@ -25,18 +25,18 @@ function print_help_menu() {
     -o : Folder to output results to. Default is 'SequelQCresults'
     -v : A verbose option for those who want updates as the program progresses
     -k : Keep intermediate files (these are removed by default)
-    -g : Groups desired. Options: 'a' for all (CLRs, subedCLRs, 
-         subreads, and longest subreads), and 'b' for basic (subedCLRs and 
-         subreads).  Default is 'a'
+    -g : Groups desired (only for when scraps files are included). Options: 
+         'a' for all (CLRs, subedCLRs, subreads, and longest subreads), and 
+         'b' for basic (subedCLRs and subreads).  Default is 'a'
     -p : Plots desired.  Options: 'b' for basic (N50 barplot, summary data
          table, and total bases barplot), 'i' for intermediate (N50 barplot, 
          summary data table, total bases barplot, ZOR plot, PSR plot, boxplot
          of subread read lengths with N50, boxplot of subedCLR read lengths 
          with N50), and 'a' for all (N50 barplot, L50 barplot, summary data 
-         table, read length histograms, total bases barplot, ZOR plot, PSR plot,
-         histograms of subreads per subedCLR, histograms of adapters per CLR, 
+         table, read length histograms, total bases barplot, ZOR plot, PSR plot 
          Boxplot of subread read lengths with N50, boxplot of subedCLR read 
-         lengths with N50).  Default is 'i'
+         lengths with N50).  Default is 'i'. The boxplot of subedCLR read 
+         lengths with N50 is only shown if scraps files are included.
     -h : opens this help menu
 helpChunk
     exit 1
@@ -44,31 +44,40 @@ helpChunk
 
 #Set an array of files and line numbers to pass to R .  Arg 1=ARGS_FOR_R Arg 2 is I
 function make_args_for_R_array() {
-    if [ "$GROUPS_DESIRED" == "a" ]; then
+    if [ "$NOSCRAPS" == true ]; then
         FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
         FILES_FOR_R+="$BASE.readLens.sub.txt,"
-        FILES_FOR_R+="$BASE.readLens.clr.txt,"
-        FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
         FILES_FOR_R+="$BASE.readLens.longSub.txt,"
-        FILES_FOR_R+="$BASE.clrStats.txt,"
         LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.clr.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
+    else
+        if [ "$GROUPS_DESIRED" == "a" ]; then
+            FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
+            FILES_FOR_R+="$BASE.readLens.sub.txt,"
+            FILES_FOR_R+="$BASE.readLens.clr.txt,"
+            FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
+            FILES_FOR_R+="$BASE.readLens.longSub.txt,"
+            FILES_FOR_R+="$BASE.clrStats.txt,"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.clr.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
 
-    elif [ "$GROUPS_DESIRED" == "b"   ]; then
-        FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
-        FILES_FOR_R+="$BASE.readLens.sub.txt,"
-        FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
-        FILES_FOR_R+="$BASE.readLens.longSub.txt,"
-        FILES_FOR_R+="$BASE.clrStats.txt,"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
+        elif [ "$GROUPS_DESIRED" == "b"   ]; then
+            FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
+            FILES_FOR_R+="$BASE.readLens.sub.txt,"
+            FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
+            FILES_FOR_R+="$BASE.readLens.longSub.txt,"
+            FILES_FOR_R+="$BASE.clrStats.txt,"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
+        fi
     fi
 }
 
@@ -116,6 +125,7 @@ REQUIRED_PAR=0 #used to determine whether all required parameters were used
 GROUPS_DESIRED='a'
 PLOTS_DESIRED='i'
 OUT_FOLD='SequelQCresults'
+NOSCRAPS=true #whether to run in NOSCRAPS mode or not
 
 #Go through input and assign input arguments to variables
 while getopts ":u:c:o:n:g:p:vkh" opt; do
@@ -126,7 +136,7 @@ while getopts ":u:c:o:n:g:p:vkh" opt; do
         ;;
       c )
         SCRAPS_FILES_BAM=$OPTARG
-        (( REQUIRED_PAR++ ))
+            NOSCRAPS=false
         ;;
       o )
         OUT_FOLD=$OPTARG
@@ -172,10 +182,17 @@ done
 
 
 #If required parameters are not provided throw an error and provide the help page
-if (( REQUIRED_PAR != 2 )); then
-    echo -e "\nERROR: The required parameters for this program are -u and -c."
+if (( REQUIRED_PAR != 1 )); then
+    echo -e "\nERROR: The required parameters for this program is -u."
     echo "You are lacking these parameters.  See our help page below"
     print_help_menu
+fi
+
+#If in verbose mode, declare whether running with or without scraps
+if [ $NOSCRAPS == true ]; then
+    echo -e "\nRunning in NO_SCRAPS mode"
+else
+    echo -e "\nRunning in WITH_SCRAPS mode"
 fi
 
 
@@ -187,12 +204,14 @@ while read -r line; do
     (( I++ ))
 done < "$SUBREADS_FILES_BAM"
 
-SCRAPS_FILES_ARRAY_BAM=()
-I=1
-while read -r line; do
-    SCRAPS_FILES_ARRAY_BAM[ $I ]="$line"
-    (( I++ ))
-done < "$SCRAPS_FILES_BAM"
+if [ $NOSCRAPS == false ]; then
+    SCRAPS_FILES_ARRAY_BAM=()
+    I=1
+    while read -r line; do
+        SCRAPS_FILES_ARRAY_BAM[ $I ]="$line"
+        (( I++ ))
+    done < "$SCRAPS_FILES_BAM"
+fi
 
 
 #Go through BAM arrays and make arrays without the .bam at the end
@@ -206,42 +225,49 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
     (( I++ ))     
 done
 
-SCRAPS_FILES_ARRAY_NOBAM=()
-I=1
-for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
-    if [[ "$BAM" =~ (.*).bam ]]; then
-        NOBAM=${BASH_REMATCH[1]}
-        SCRAPS_FILES_ARRAY_NOBAM[ $I ]="$NOBAM"
-    fi
-    (( I++ ))
-done
+if [ $NOSCRAPS == false ]; then
+    SCRAPS_FILES_ARRAY_NOBAM=()
+    I=1
+    for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
+        if [[ "$BAM" =~ (.*).bam ]]; then
+            NOBAM=${BASH_REMATCH[1]}
+            SCRAPS_FILES_ARRAY_NOBAM[ $I ]="$NOBAM"
+        fi
+        (( I++ ))
+    done
+fi
 
 
 #Make an array of base filenames (before .scraps or .subreads)
 FILES_BASE_ARRAY=()
 I=1
-for NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
-    if [[ "$NOBAM" =~ (.*).scraps ]]; then
+for NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
+    if [[ "$NOBAM" =~ (.*).subreads ]]; then
         BASE=${BASH_REMATCH[1]}
         FILES_BASE_ARRAY[ $I ]="$BASE"
     fi
     (( I++ ))
 done
 
-FILES_BASE_ARRAY2=()
-I=1
-for NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
-    if [[ "$NOBAM" =~ (.*).subreads ]]; then
-        BASE=${BASH_REMATCH[1]}
-        FILES_BASE_ARRAY2[ $I ]="$BASE"
-    fi
-    (( I++ ))
-done
+if [ $NOSCRAPS == false ]; then
+    FILES_BASE_ARRAY2=()
+    I=1
+    for NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
+        if [[ "$NOBAM" =~ (.*).scraps ]]; then
+            BASE=${BASH_REMATCH[1]}
+            FILES_BASE_ARRAY2[ $I ]="$BASE"
+        fi
+        (( I++ ))
+    done
+fi
+
 
 #Ensure that the scraps and subreads files match
-if [ "${FILES_BASE_ARRAY[*]}" != "${FILES_BASE_ARRAY2[*]}" ]; then
-    echo -e "\nERROR: Your scraps and subreads files do not match"
-    print_help_menu
+if [ $NOSCRAPS == false ]; then
+    if [ "${FILES_BASE_ARRAY[*]}" != "${FILES_BASE_ARRAY2[*]}" ]; then
+        echo -e "\nERROR: Your scraps and subreads files do not match"
+        print_help_menu
+    fi
 fi
 
 #Extract names that will contain coords necessary for calculating length
@@ -266,21 +292,23 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
     (( I++ ))
 done
 
-I=1
-for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
-    #Check that .bam files exist and are not empty
-    if [ ! -s "$BAM" ]; then
-        echo >&2 "the BAM file "$BAM" is empty or does not exist"
-        print_help_menu
-    fi
+if [ $NOSCRAPS == false ]; then
+    I=1
+    for BAM in "${SCRAPS_FILES_ARRAY_BAM[@]}"; do
+        #Check that .bam files exist and are not empty
+        if [ ! -s "$BAM" ]; then
+            echo >&2 "the BAM file "$BAM" is empty or does not exist"
+            print_help_menu
+        fi
 
-    NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
-    (( I++ ))
-done
+        NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
+        samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+        echo >&2 "$FAILED_EXTRACTION"
+        exit 1
+        }
+        (( I++ ))
+    done
+fi
 
 if [ $VERBOSE == true ]; then
     echo "Data extraction was sucessful"
@@ -293,24 +321,38 @@ FAILED_RLSTATS="ERROR: Calculation of read length statistics failed!"
 FILES_FOR_R=""
 LENGTHS_FOR_R=""
 I=1
-for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
-    SUBREADS_NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
+for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
+    SCRAPS_NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
     BASE=${FILES_BASE_ARRAY[I]}
-  
+ 
     if [ "$PY_VER" == 2 ]; then
-        python generateReadLenStats.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+        if [ $NOSCRAPS == true ]; then
+            python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        else
+            python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        python generateReadLenStats_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-        echo >&2 "$FAILED_RLSTATS"
-        exit 1
-        }
+        if [ $NOSCRAPS == true ]; then
+            python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        else
+            python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            echo >&2 "$FAILED_RLSTATS"
+            exit 1
+            }
+        fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
@@ -330,13 +372,16 @@ if [ $VERBOSE == true ]; then
     echo "Creating plots"
 fi
 
-
 #Make plots related to read length stats in R
 if [ ! -d "$OUT_FOLD" ]; then
     mkdir "$OUT_FOLD"
 fi
 
-Rscript plotForSequelQC.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE"  "$OUT_FOLD" #the '::-1' is to remove the comma at the end
+if [ $NOSCRAPS == false ]; then
+    Rscript plotForSequelQC_wScraps.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$GROUPS_DESIRED" "$PLOTS_DESIRED" "$VERBOSE" "$OUT_FOLD" #the '::-1' is to remove the comma at the end
+else
+    Rscript plotForSequelQC_noScraps.R ${FILES_FOR_R::-1} ${LENGTHS_FOR_R::-1} "$PLOTS_DESIRED" "$VERBOSE" "$OUT_FOLD" #the '::-1' is to remove the comma at the end
+fi
 
 if [ $VERBOSE == true ]; then
     echo "Plot creation complete"
@@ -349,18 +394,23 @@ if [ $KEEP == false ]; then
         echo "Deleting intermediate files"
     fi
     I=1
-    for SCRAPS_NOBAM in "${SCRAPS_FILES_ARRAY_NOBAM[@]}"; do
-        SUBREADS_NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
+    for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
+        if [ $NOSCRAPS == false ]; then
+            SCRAPS_NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
+        fi
         BASE=${FILES_BASE_ARRAY[I]} 
 
-        rm "$SCRAPS_NOBAM.seqNamesPlus"
         rm "$SUBREADS_NOBAM.seqNames"
         rm "$BASE.readLens.sub.txt"
-        rm "$BASE.readLens.clr.txt"
         rm "$BASE.readLens.longSub.txt"
-        rm "$BASE.readLens.subedClr.txt"
         rm "$BASE.SMRTcellStats.txt"
-        rm "$BASE.clrStats.txt"
+
+        if [ $NOSCRAPS == false ]; then
+            rm "$SCRAPS_NOBAM.seqNamesPlus"
+            rm "$BASE.readLens.clr.txt"
+            rm "$BASE.readLens.subedClr.txt"
+            rm "$BASE.clrStats.txt"
+        fi
 
         (( I++ ))
     done
