@@ -220,7 +220,7 @@ for(i in seq(numPairs)){
     zor = zors[i]
 
     #Output the data to a summary table
-    toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubreads, numLongSubs, totalSubBases, totalLongSubBases, meanSubreadRL, meanLongSubRL, medianSubreadRL, medianLongSubRL, subN50, longSubN50, subL50, longSubL50, psr, zor)
+    toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubreads, numLongSubs, totalSubBases, totalLongSubBases, meanSubreadRL, meanLongSubRL, medianSubreadRL, medianLongSubRL, subN50, longSubN50, subL50, longSubL50, sprintf("%.3f", round(psr, 3)), sprintf("%.3f", round(zor, 3)))
     cat(toOut)
 }
 sink()
@@ -242,10 +242,14 @@ if (plotsDesired == "a") {
         subBreaks = round((max(subRLs, na.rm=TRUE) / 1000), 0)
         longSubBreaks = round((max(longSubRLs, na.rm=TRUE) / 1000), 0)
 
+        #Determin the xlim to use
+        topVal = max(subRLs,longSubRLs, na.rm=TRUE)
+        cutoff = topVal*0.6
+
         #Plot
         pdf(histName); par(lwd=1.5, mfrow=c(2,1))
-        hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD")
-        hist(longSubRLs, xlab="Read Length (bp)", main=longSubTitle, breaks=longSubBreaks, col="chartreuse2")
+        hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD", xlim=c(0,cutoff))
+        hist(longSubRLs, xlab="Read Length (bp)", main=longSubTitle, breaks=longSubBreaks, col="chartreuse2", xlim=c(0,cutoff))
         invisible(dev.off())
     }
 }
@@ -311,7 +315,7 @@ if (plotsDesired != "b") {
     ##Make boxplots of subread sizes with N50 shown 
     plotName = sprintf("%s/subreadSizesBoxplots.pdf",outFold)
     pdf(plotName)
-    par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
+    par(omi=c(1.2,0,0,0), mgp=c(2.55,1,0))
     boxplot(t(subReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of Subread Sizes with N50", las=2)
     points(subN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())

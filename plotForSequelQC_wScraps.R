@@ -358,9 +358,9 @@ for(i in seq(numPairs)){
 
     #Output the data to a summary table
     if (groupsDesired == "a") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numClrReads, numSubedClrReads, numSubreads, numLongSubs, totalClrBases, totalSubedClrBases, totalSubBases, totalLongSubBases, meanClrRL, meanSubedClrRL, meanSubreadRL, meanLongSubRL, medianClrRL, medianSubedClrRL, medianSubreadRL, medianLongSubRL, clrN50, subedClrN50, subN50, longSubN50, clrL50, subedClrL50, subL50, longSubL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numClrReads, numSubedClrReads, numSubreads, numLongSubs, totalClrBases, totalSubedClrBases, totalSubBases, totalLongSubBases, meanClrRL, meanSubedClrRL, meanSubreadRL, meanLongSubRL, medianClrRL, medianSubedClrRL, medianSubreadRL, medianLongSubRL, clrN50, subedClrN50, subN50, longSubN50, clrL50, subedClrL50, subL50, longSubL50, sprintf("%.3f", round(psr, 3)), sprintf("%.3f", round(zor, 3)))
     }else if (groupsDesired == "b") {
-        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedClrReads, numSubreads, totalSubedClrBases, totalSubBases, meanSubedClrRL, meanSubreadRL, medianSubedClrRL, medianSubreadRL, subedClrN50, subN50, subedClrL50, subL50, psr, zor)
+        toOut = sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", pairName, numSubedClrReads, numSubreads, totalSubedClrBases, totalSubBases, meanSubedClrRL, meanSubreadRL, medianSubedClrRL, medianSubreadRL, subedClrN50, subN50, subedClrL50, subL50, sprintf("%.3f", round(psr, 3)), sprintf("%.3f", round(zor, 3)))
     }
     cat(toOut)
 }
@@ -396,20 +396,28 @@ if (plotsDesired == "a") {
             clrBreaks = round((max(clrRLs, na.rm=TRUE) / 1000), 0)
             longSubBreaks = round((max(longSubRLs, na.rm=TRUE) / 1000), 0)
 
+            #Determin the xlim to use
+            topVal = max(clrRLs, subedClrRLs, subRLs, longSubRLs, na.rm=TRUE)
+            cutoff = topVal*0.6
+
             #Plot
             pdf(histName); par(lwd=1.5, mfrow=c(4,1))
 
-            hist(clrRLs, xlab="Read Length (bp)", main=clrTitle, breaks=clrBreaks, col="black")
-            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="gray55")
-            hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD")
-            hist(longSubRLs, xlab="Read Length (bp)", main=longSubTitle, breaks=longSubBreaks, col="chartreuse2")
+            hist(clrRLs, xlab="Read Length (bp)", main=clrTitle, breaks=clrBreaks, col="black", xlim=c(0,cutoff), border="white", lwd=0.2)
+            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="gray55", xlim=c(0,cutoff))
+            hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD", xlim=c(0,cutoff))
+            hist(longSubRLs, xlab="Read Length (bp)", main=longSubTitle, breaks=longSubBreaks, col="chartreuse2", xlim=c(0,cutoff))
             invisible(dev.off())
         }else if (groupsDesired == "b") {
+            #Determin the xlim to use
+            topVal = max(subedClrRLs, subRLs, na.rm=TRUE)
+            cutoff = topVal*0.6
+
             #Plot
             pdf(histName); par(lwd=1.5, mfrow=c(2,1))
 
-            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="gray55")
-            hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD")
+            hist(subedClrRLs, xlab="Read Length (bp)", main=subedClrTitle, breaks=subedClrBreaks, col="gray55", xlim=c(0,cutoff))
+            hist(subRLs, xlab="Read Length (bp)", main=subTitle, breaks=subBreaks, col="#0276FD", xlim=c(0,cutoff))
             invisible(dev.off())
         }
     }
@@ -474,15 +482,15 @@ if (plotsDesired != "b") {
 }
 
 
-#Make adapter and subread histograms
+#Make adapters and subreads per CLR plots
 if (plotsDesired == "a") {
-    ##Make read length histograms of subreads/CLR
+    ##Make frequency plots of subreads/CLR
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("%s/%s.subsPerClrHist.pdf", outFold, pairNames[i])
+            plotName = sprintf("%s/%s.subsPerClr.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5, mgp=c(2.2,1,0))
             
-            #Make histogram manually as a line plot to avoid binning 0 and 1 together
+            #Make "histogram" manually as a line plot to avoid binning 0 and 1 together
             zero = length(numSubsPerClrMatrix[i,][numSubsPerClrMatrix[i,]==0])
             one = length(numSubsPerClrMatrix[i,][numSubsPerClrMatrix[i,]==1])
             two = length(numSubsPerClrMatrix[i,][numSubsPerClrMatrix[i,]==2])
@@ -494,18 +502,18 @@ if (plotsDesired == "a") {
             x = c(0,1,2,3,4,5,6)
             y = c(zero, one, two, three, four, five, sixPlus)/1000
 
-            plot(x,y, type="b", pch=16, main="Subreads per CLR", xlab="Subreads per CLR", ylab="Frequency/1000")
+            plot(x,y, type="b", pch=16, main="Subreads per CLR Frequencies", xlab="Subreads per CLR", ylab="Frequency / 1000")
             invisible(dev.off())
         }
     }
 
-    ##Make read length histograms of adapters/CLR
+    ##Make frequency plots of adapters/CLR
     if (groupsDesired == "a") {
         for(i in seq(numPairs)){
-            plotName = sprintf("%s/%s.adsPerClrHists.pdf", outFold, pairNames[i])
+            plotName = sprintf("%s/%s.adsPerClr.pdf", outFold, pairNames[i])
             pdf(plotName); par(lwd=1.5)
 
-            #Make histogram manually as a line plot to avoid binning 0 and 1 together                     
+            #Make "histogram" manually as a line plot to avoid binning 0 and 1 together                   
             zero = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]==0])                            
             one = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]==1])                             
             two = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]==2])                             
@@ -513,15 +521,11 @@ if (plotsDesired == "a") {
             four = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]==4])                            
             five = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]==5])                            
             sixPlus = length(numAdsPerClrMatrix[i,][numAdsPerClrMatrix[i,]>5])                          
-                                                                                                          
-            x = c(0,1,2,3,4,5,6)                                                                          
+
+            x = c(0,1,2,3,4,5,6)                                                                                    
             y = c(zero, one, two, three, four, five, sixPlus)/1000                                        
-                                                                                                         
-            plot(x,y, type="b", pch=16, main="Adapters per CLR", xlab="Adapters per CLR", ylab="Frequency/1000")
 
-
-
-            #hist(numAdsPerClrMatrix[i,], breaks=max(numAdsPerClrMatrix[i,], na.rm=TRUE), xlim=c(0,6), main="Histogram of Adapters per CLR", xlab="Adapters per CLR", col="#0276FD")
+            plot(x,y, type="b", pch=16, main="Adapters per CLR Frequencies", xlab="Adapters per CLR", ylab="Frequency / 1000")
             invisible(dev.off())
         }
     }
@@ -533,7 +537,7 @@ if (plotsDesired != "b") {
     ##Make boxplots of subread sizes with N50 shown 
     plotName = sprintf("%s/subreadSizesBoxplots.pdf",outFold)
     pdf(plotName)
-    par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
+    par(omi=c(1.2,0,0,0), mgp=c(2.55,1,0))
     boxplot(t(subReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of Subread Sizes with N50", las=2)
     points(subN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())
@@ -541,7 +545,7 @@ if (plotsDesired != "b") {
     ##Make boxplots of subedClr sizes with N50 shown 
     plotName = sprintf("%s/subedClrSizesBoxplots.pdf",outFold)
     pdf(plotName)
-    par(omi=c(1.5,0,0,0), mgp=c(2.55,1,0))
+    par(omi=c(1.2,0,0,0), mgp=c(2.55,1,0))
     boxplot(t(subedClrReadLensMatrix)/1000, names=pairNames, ylab="Read Length (kb)", main="Boxplots of SubedCLR Sizes with N50", las=2)
     points(subedClrN50s/1000, pch=18, col="#0276FD", cex=2)
     invisible(dev.off())

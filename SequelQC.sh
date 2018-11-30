@@ -25,7 +25,7 @@ function print_help_menu() {
     -o : Folder to output results to. Default is 'SequelQCresults'
     -v : A verbose option for those who want updates as the program progresses
     -k : Keep intermediate files (these are removed by default)
-    -g : Groups desired (only for when scraps files are included). Options: 
+    -g : Groups desired (only works when scraps files are included). Options: 
          'a' for all (CLRs, subedCLRs, subreads, and longest subreads), and 
          'b' for basic (subedCLRs and subreads).  Default is 'a'
     -p : Plots desired.  Options: 'b' for basic (N50 barplot, summary data
@@ -35,8 +35,10 @@ function print_help_menu() {
          with N50), and 'a' for all (N50 barplot, L50 barplot, summary data 
          table, read length histograms, total bases barplot, ZOR plot, PSR plot 
          Boxplot of subread read lengths with N50, boxplot of subedCLR read 
-         lengths with N50).  Default is 'i'. The boxplot of subedCLR read 
-         lengths with N50 is only shown if scraps files are included.
+         lengths with N50, subreads/CLR frequency plot, and adapters/CLR 
+         frequency plot).  Default is 'i'. The boxplot of subedCLR read 
+         lengths with N50, subreads/CLR frequency plot, and adapters/CLR 
+         frequency plot are only produced if scraps files are included.
     -h : opens this help menu
 helpChunk
     exit 1
@@ -188,6 +190,7 @@ if (( REQUIRED_PAR != 1 )); then
     print_help_menu
 fi
 
+
 #If in verbose mode, declare whether running with or without scraps
 if [ $NOSCRAPS == true ]; then
     echo -e "\nRunning in NO_SCRAPS mode"
@@ -285,10 +288,10 @@ for BAM in "${SUBREADS_FILES_ARRAY_BAM[@]}"; do
     fi
 
     NOBAM=${SUBREADS_FILES_ARRAY_NOBAM[I]}
-    samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
-    echo >&2 "$FAILED_EXTRACTION"
-    exit 1
-    }
+    #samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1}' > "$NOBAM.seqNames" || {
+    #echo >&2 "$FAILED_EXTRACTION"
+    #exit 1
+    #}
     (( I++ ))
 done
 
@@ -302,10 +305,10 @@ if [ $NOSCRAPS == false ]; then
         fi
 
         NOBAM=${SCRAPS_FILES_ARRAY_NOBAM[I]}
-        samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
-        echo >&2 "$FAILED_EXTRACTION"
-        exit 1
-        }
+        #samtools view --threads "$NTHREADS" -O SAM "$BAM" | awk '{print $1,"\t",$21,"\t",$22}' > "$NOBAM.seqNamesPlus" || {
+        #echo >&2 "$FAILED_EXTRACTION"
+        #exit 1
+        #}
         (( I++ ))
     done
 fi
@@ -326,33 +329,33 @@ for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
     BASE=${FILES_BASE_ARRAY[I]}
  
     if [ "$PY_VER" == 2 ]; then
-        if [ $NOSCRAPS == true ]; then
-            python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
-        else
-            python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
-        fi
+        #if [ $NOSCRAPS == true ]; then
+            #python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            #echo >&2 "$FAILED_RLSTATS"
+            #exit 1
+            #}
+        #else
+            #python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            #echo >&2 "$FAILED_RLSTATS"
+            #exit 1
+            #}
+        #fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
 
     elif [ "$PY_VER" == 3 ]; then
-        if [ $NOSCRAPS == true ]; then
-            python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
-        else
-            python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
-        fi
+        #if [ $NOSCRAPS == true ]; then
+            #python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            #echo >&2 "$FAILED_RLSTATS"
+            #exit 1
+            #}
+        #else
+            #python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+            #echo >&2 "$FAILED_RLSTATS"
+            #exit 1
+            #}
+        #fi
 
         #Set an array of args (files and line numbers) to pass to R.
         make_args_for_R_array
