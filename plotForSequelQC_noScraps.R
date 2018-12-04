@@ -80,7 +80,7 @@ for(i in seq(numFiles)){
 #Determine names of SMRTcells
 pairNames = c()
 for(fileName in SMRTcellStatsFiles){
-    pairName = strsplit(fileName,".SMRTcellStats.txt")[1]
+    pairName = strsplit(fileName,".SMRTcellStats_noScraps.txt")[1]
     pairNames = append(pairNames, pairName)
 }
 
@@ -244,7 +244,7 @@ if (plotsDesired == "a") {
 
         #Determin the xlim to use
         topVal = max(subRLs,longSubRLs, na.rm=TRUE)
-        cutoff = topVal*0.6
+        cutoff = topVal*0.8
 
         #Plot
         pdf(histName); par(lwd=1.5, mfrow=c(2,1))

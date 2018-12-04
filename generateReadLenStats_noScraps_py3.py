@@ -10,7 +10,7 @@ Created By David E. Hufnagel on Mon Nov 24, 2018
 import sys
 
 subsInp = open(sys.argv[1])                  #m#####_######_######.subreads.seqNames
-outStat = open(sys.argv[2], "w")             #m#####_######_######.SMRTcellStats.txt
+outStat = open(sys.argv[2], "w")             #m#####_######_######.SMRTcellStats_noScraps.txt
 outReadLensSub = open(sys.argv[3], "w")      #m#####_######_######.readLens.sub.txt
 outReadLensLongSub = open(sys.argv[4], "w")  #m#####_######_######.readLens.longSub.txt
 

@@ -47,21 +47,21 @@ helpChunk
 #Set an array of files and line numbers to pass to R .  Arg 1=ARGS_FOR_R Arg 2 is I
 function make_args_for_R_array() {
     if [ "$NOSCRAPS" == true ]; then
-        FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
+        FILES_FOR_R+="$BASE.SMRTcellStats_noScraps.txt,"
         FILES_FOR_R+="$BASE.readLens.sub.txt,"
         FILES_FOR_R+="$BASE.readLens.longSub.txt,"
-        LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
+        LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats_noScraps.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
         LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
     else
         if [ "$GROUPS_DESIRED" == "a" ]; then
-            FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
+            FILES_FOR_R+="$BASE.SMRTcellStats_wScrapsA.txt,"
             FILES_FOR_R+="$BASE.readLens.sub.txt,"
             FILES_FOR_R+="$BASE.readLens.clr.txt,"
             FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
             FILES_FOR_R+="$BASE.readLens.longSub.txt,"
             FILES_FOR_R+="$BASE.clrStats.txt,"
-            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats_wScrapsA.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.clr.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
@@ -69,12 +69,12 @@ function make_args_for_R_array() {
             LENGTHS_FOR_R+="$(wc -l "$BASE.clrStats.txt" | cut -f 1 -d ' '),"
 
         elif [ "$GROUPS_DESIRED" == "b"   ]; then
-            FILES_FOR_R+="$BASE.SMRTcellStats.txt,"
+            FILES_FOR_R+="$BASE.SMRTcellStats_wScrapsB.txt,"
             FILES_FOR_R+="$BASE.readLens.sub.txt,"
             FILES_FOR_R+="$BASE.readLens.subedClr.txt,"
             FILES_FOR_R+="$BASE.readLens.longSub.txt,"
             FILES_FOR_R+="$BASE.clrStats.txt,"
-            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats.txt" | cut -f 1 -d ' '),"
+            LENGTHS_FOR_R+="$(wc -l "$BASE.SMRTcellStats_wScrapsB.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.sub.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.subedClr.txt" | cut -f 1 -d ' '),"
             LENGTHS_FOR_R+="$(wc -l "$BASE.readLens.longSub.txt" | cut -f 1 -d ' '),"
@@ -330,15 +330,22 @@ for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
  
     if [ "$PY_VER" == 2 ]; then
         if [ $NOSCRAPS == true ]; then
-            python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            python generateReadLenStats_noScraps_py2.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_noScraps.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
             echo >&2 "$FAILED_RLSTATS"
             exit 1
             }
         else
-            python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
+            if [ "$GROUPS_DESIRED" == "a" ]; then
+                python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_wScrapsA.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+                echo >&2 "$FAILED_RLSTATS"
+                exit 1
+                }
+            elif [ "$GROUPS_DESIRED" == "b" ]; then
+                python generateReadLenStats_wScraps_py2.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_wScrapsB.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+                echo >&2 "$FAILED_RLSTATS"
+                exit 1
+                }
+            fi
         fi
 
         #Set an array of args (files and line numbers) to pass to R.
@@ -346,15 +353,22 @@ for SUBREADS_NOBAM in "${SUBREADS_FILES_ARRAY_NOBAM[@]}"; do
 
     elif [ "$PY_VER" == 3 ]; then
         if [ $NOSCRAPS == true ]; then
-            python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
+            python generateReadLenStats_noScraps_py3.py "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_noScraps.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.longSub.txt" || {
             echo >&2 "$FAILED_RLSTATS"
             exit 1
             }
         else
-            python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
-            echo >&2 "$FAILED_RLSTATS"
-            exit 1
-            }
+            if [ "$GROUPS_DESIRED" == "a" ]; then
+                python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_wScrapsA.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+                echo >&2 "$FAILED_RLSTATS"
+                exit 1
+                }
+            elif [ "$GROUPS_DESIRED" == "b" ]; then
+                python generateReadLenStats_wScraps_py3.py "$SCRAPS_NOBAM.seqNamesPlus" "$SUBREADS_NOBAM.seqNames" "$BASE.SMRTcellStats_wScrapsB.txt" "$BASE.readLens.sub.txt" "$BASE.readLens.clr.txt" "$BASE.readLens.subedClr.txt" "$BASE.readLens.longSub.txt" "$BASE.clrStats.txt" "$GROUPS_DESIRED" || {
+                echo >&2 "$FAILED_RLSTATS"
+                exit 1
+                }
+            fi
         fi
 
         #Set an array of args (files and line numbers) to pass to R.

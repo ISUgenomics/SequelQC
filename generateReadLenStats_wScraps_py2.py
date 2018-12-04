@@ -21,7 +21,7 @@ import sys
 groupsDesired = sys.argv[9]                  #a or b (stands for 'all' or 'basic')
 scrapsInp = open(sys.argv[1])                #m#####_######_######.scraps.seqNamesPlus
 subsInp = open(sys.argv[2])                  #m#####_######_######.subreads.seqNames
-outStat = open(sys.argv[3], "w")             #m#####_######_######.SMRTcellStats.txt
+outStat = open(sys.argv[3], "w")             #m#####_######_######.SMRTcellStats_wScrapsA.txt or m#####_######_######.SMRTcellStats_wScrapsB.txt
 outReadLensSub = open(sys.argv[4], "w")      #m#####_######_######.readLens.sub.txt
 if groupsDesired == "a":
     outReadLensClr = open(sys.argv[5], "w")  #m#####_######_######.readLens.clr.txt

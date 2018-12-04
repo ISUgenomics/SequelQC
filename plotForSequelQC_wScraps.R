@@ -124,7 +124,12 @@ for(i in seq(numFiles)){
 #Determine names of SMRTcells
 pairNames = c()
 for(fileName in SMRTcellStatsFiles){
-    pairName = strsplit(fileName,".SMRTcellStats.txt")[1]
+    if (groupsDesired == "a") {
+    pairName = strsplit(fileName,".SMRTcellStats_wScrapsA.txt")[1]
+    }else if (groupsDesired == "b") {
+    pairName = strsplit(fileName,".SMRTcellStats_wScrapsB.txt")[1]
+    }
+
     pairNames = append(pairNames, pairName)
 }
 
@@ -398,7 +403,7 @@ if (plotsDesired == "a") {
 
             #Determin the xlim to use
             topVal = max(clrRLs, subedClrRLs, subRLs, longSubRLs, na.rm=TRUE)
-            cutoff = topVal*0.6
+            cutoff = topVal*0.8
 
             #Plot
             pdf(histName); par(lwd=1.5, mfrow=c(4,1))
@@ -411,7 +416,7 @@ if (plotsDesired == "a") {
         }else if (groupsDesired == "b") {
             #Determin the xlim to use
             topVal = max(subedClrRLs, subRLs, na.rm=TRUE)
-            cutoff = topVal*0.6
+            cutoff = topVal*0.8
 
             #Plot
             pdf(histName); par(lwd=1.5, mfrow=c(2,1))
