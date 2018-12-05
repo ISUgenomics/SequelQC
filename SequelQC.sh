@@ -420,13 +420,18 @@ if [ $KEEP == false ]; then
         rm "$SUBREADS_NOBAM.seqNames"
         rm "$BASE.readLens.sub.txt"
         rm "$BASE.readLens.longSub.txt"
-        rm "$BASE.SMRTcellStats.txt"
+        rm "$BASE.SMRTcellStats_noScraps.txt"
 
         if [ $NOSCRAPS == false ]; then
             rm "$SCRAPS_NOBAM.seqNamesPlus"
             rm "$BASE.readLens.clr.txt"
             rm "$BASE.readLens.subedClr.txt"
             rm "$BASE.clrStats.txt"
+            if [ "$GROUPS_DESIRED" == "a" ]; then
+                rm "$BASE.SMRTcellStats_wScrapsA.txt"
+            elif [ "$GROUPS_DESIRED" == "b" ]; then
+                rm "$BASE.SMRTcellStats_wScrapsB.txt"
+            fi
         fi
 
         (( I++ ))
