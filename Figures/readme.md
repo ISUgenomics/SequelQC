@@ -1,4 +1,4 @@
-###SequelQC Figures from the test dataset
+# SequelQC Figures from the test dataset
 
 **summaryTable.txt** is an Microsoft Excel compatable table that has many statistics for all SMRTcells including number of reads,total  bases,  mean  and  median  read  length,  N50,  L50,  PSR,  and  ZOR.
 
