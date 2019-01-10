@@ -1,4 +1,4 @@
-###All Scripts for SequelQC
+# All Scripts for SequelQC
 
 **SequelQC.sh** is the main script for SequelQC; it handles the user interface and all other scripts are called by this script.
 
