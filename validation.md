@@ -1,7 +1,7 @@
 # SequelQC validation
 
 
-Test data set was downloaded from the [PacBio website](https://www.pacb.com/blog/puerto-rican-genome/). Human genome raw dataset, generated for benchmarking purposes by PacBio was used for validation. Briefly, the steps are as follows:
+Test data set was downloaded from the [PacBio website](https://www.pacb.com/blog/puerto-rican-genome/). Human genome data set, generated for benchmarking purposes by PacBio was used for validation. The steps are descried below:
 
 Data download:
 
@@ -15,7 +15,7 @@ wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_1
 wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_180428_044608.subreads.bam
 wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_180429_213837.subreads.bam
 ```
-Since one of data set name was not in the standard Sequel format, we renamed it as follows:
+SequelQC expects the file names to be in the standard format. Since one of the file was changed, we renamed it have standard name:
 ```
 mv GRCh38.HG002.bam m00000_000000_000000.subreads.bam
 ```
