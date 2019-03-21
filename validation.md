@@ -15,12 +15,12 @@ wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_1
 wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_180428_044608.subreads.bam
 wget https://downloads.pacbcloud.com/public/dataset/HG002/Sequel-201804/m54006_180429_213837.subreads.bam
 ```
-SequelQC expects the file names to be in the standard format. Since one of the file was changed, we renamed it have standard name:
+SequelQC expects the file names to be in the standard format. Since one of the files has an unusual name, we renamed it have a standard name:
 ```
 mv GRCh38.HG002.bam m00000_000000_000000.subreads.bam
 ```
 
-In order to test different number of SMRTcells with different number of CPU's following fofn (file of file names) was created:
+In order to test different numbers of SMRTcells with different numbers of CPU's following fofn (file of file names) was created:
 
 ```
 ls -1 *.bam |head -n 1 > list_1.fofn
@@ -33,7 +33,7 @@ ls -1 *.bam |head -n 7 > list_7.fofn
 ls -1 *.bam > list_8.fofn
 ```
 
-Run script for executing the SequelQC script was set-up as follows:
+The run script for executing the SequelQC script was set-up as follows:
 
 ```
 #!/bin/bash
