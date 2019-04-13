@@ -258,7 +258,7 @@ if (plotsDesired == "a") {
 #Make a barplot of total bases for all the same groups for each SMRTcell
 plotName = sprintf("%s/totalBasesBarplot.pdf",outFold)
 pdf(plotName)
-par(omi=c(0.8,0,0,0), mgp=c(3.6,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
+par(omi=c(1.2,0,0,0), mgp=c(3.6,1,0), mar=c(5.1, 5.1, 4.1, 2.1))
 totalBasesArray = rbind(totalBasesSubAr, totalBasesLongSubAr)
 
 barplot(totalBasesArray/1000000, main="Total Bases Barplot", ylab="Total Bases (Mb)", las=2, beside=TRUE, names.arg=pairNames, col=c("#0276FD","chartreuse2"), ylim=c(0,max(totalBasesArray)*1.15/1000000))
