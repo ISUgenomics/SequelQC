@@ -45,7 +45,7 @@ bash SequelQC.sh
 
 This should bring up the help menu.
 
-_SequelQC_ has two required arguments, `-u` and `-c`. The argument `-u` requires a file listing all the locations of the s`u`bread BAM files and `-c` requires a file listing the location of all s`c`raps BAM files.  In each case the format is simply one filename per line.  Note that _SequelQC_ requires scraps files to run so don't throw them away!
+_SequelQC_ has only one required argument, `-u`. The argument `-u` requires a file listing all the locations of the s`u`bread BAM files.  With this argument alone _SequelQC_ will run without scraps files.  _SequelQC_ may also be run with scraps files by including the `-c` parameter which requires a file listing the location of all s`c`raps BAM files.  In each case the format is simply one filename per line.  With scraps files _SequelQC_ takes longer to run, but also creates more plots and provides more information within the same plots regarding continuous long reads (CLRs).
 
 The easy way to generate these files is using the find command:
 
