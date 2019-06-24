@@ -57,6 +57,19 @@ find $(pwd) -name "*scraps.bam"  > scraps.txt
 Once done, to run _SequelQC_ using all default arguments execute `SequelQC.sh` as follows:
 
 ```
+./SequelQC.sh -u subreads.txt
+```
+
+or 
+
+```
+bash SequelQC.sh -u subreads.txt
+```
+
+or
+
+
+```
 ./SequelQC.sh -u subreads.txt -c scraps.txt
 ```
 
