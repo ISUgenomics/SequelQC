@@ -8,7 +8,7 @@
 
 **totalBasesBarplot.pdf** is a barplot of total bases for all read groups for all SMRTcells.
 
-**ReadLenHists** is a folder containing histograms of read lengths for all read groups for each SMRTcell. 
+**m54043_180926_165101.readLenHists.pdf** is a folder containing histograms of read lengths for all read groups for each SMRTcell. 
 
 **subreadSizesBoxplots.pdf** is a set of boxplots with N50s in blue for all SMRTcells.
 
@@ -17,6 +17,8 @@
 **psrs.pdf** is a plot of PSRS for all SMRTcells.
 
 **SequelQCruntime.png** plots the real runtime of between one and eight SMRTcells ofsequence from our benchmarking dataset using between one and sixteen CPUs
+
+**sequelqc-workflow.jpg** A flowchart of how SequelQC processes inputfiles  and  uses  them  to  create  the  summary  statistics  table  and  all  requestedplots.
 
 **Figures not present**:
 Because the test dataset does not include scraps files the figures that SequelQC can produce that are not here are frequency plots of subreads per subedCLR, frequency plots of adapters per CLR and boxplots of subedCLR read lengths with N50s in blue.        
