@@ -31,6 +31,8 @@ No compilation is required so you are now done with installation!
 
 ## Running SequelQC
 
+For a test data set we recommend using https://www.ncbi.nlm.nih.gov/sra?linkname=bioproject_sra_all&from_uid=483067
+
 The `SequelQC.sh` is the main script to execute. This script will call all other necessary scripts. You can test whether the main script was properly installed by calling the script alone:
 
 ```
