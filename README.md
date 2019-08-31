@@ -101,3 +101,10 @@ Some users may want to modify _SequelQC_'s plots and the summary statistics tabl
 
 Next the user will need to modify the copied script as needed.  During the process of writing scripts it is common to run the script several times to test new code as it is being written.  In order to make this process faster for the user we have added a parameter `-s` which will skip the read length calculations with samtools and the statistical calculations with Python which together generate the intermediate files.  Together these steps make up most of the runtime of _SequelQC_, therefore skipping these steps allows for rapid testing of alternative plotting scripts. Whether the user is modifying a _SequelQC_ R plotting script or using one created from scratch, at this time the user will also need to provide the custom plotting script to _SequelQC_.  This can be done by using the `-r` argument followed by the name of the custom script.  Keep in mind that the `-k` argument will remain necessary or else the intermediate files will all be deleted at the end of _SequelQC_'s operation
 
+An example of running \textit{SequelQC} with an alternative R plot with minimal recommended arguments with scraps files:
+
+\indent\code{bash SequelQC.sh -u subFiles.txt -c scrFiles -k -s -r altRscript\_wScraps.R}
+
+and without scraps files:
+
+\indent\code{bash SequelQC.sh -u subFiles.txt -k -s -r altRscript\_noScraps.R}
